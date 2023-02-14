@@ -1,8 +1,7 @@
 package com.example.loyalProgram.services;
 
-import java.math.BigDecimal;
+import com.example.loyalProgram.DTOs.SaleDTO;
 
 public interface SaleService {
-
-    void makeSale(Integer clientId, BigDecimal price);
+    void makeSale(SaleDTO sale);
 }

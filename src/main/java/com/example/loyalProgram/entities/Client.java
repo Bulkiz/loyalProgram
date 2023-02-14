@@ -1,9 +1,6 @@
 package com.example.loyalProgram.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +18,14 @@ public class Client extends BaseEntity{
     private String name;
     @OneToMany(mappedBy = "client")
     private List<Sale> sales;
-    @OneToMany(mappedBy = "client")
-    private List<Card> cards;
-
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
+
+    @OneToOne
+    @JoinColumn(name = "tier_id")
+    private Tier tier;
 }

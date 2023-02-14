@@ -14,16 +14,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Merchant extends BaseEntity{
-
+public class Merchant extends BaseEntity {
     private String name;
-
     @OneToMany(mappedBy = "merchant")
     private List<Sale> sales;
-
     @OneToMany(mappedBy = "merchant")
     private List<Tier> tiers;
-
     @OneToMany(mappedBy = "merchant")
     private List<Client> clients;
+
 }

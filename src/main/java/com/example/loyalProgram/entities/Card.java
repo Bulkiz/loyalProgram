@@ -16,9 +16,5 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Card extends BaseEntity{
-
     private BigDecimal balance;
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
 }
