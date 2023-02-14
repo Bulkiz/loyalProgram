@@ -1,5 +1,6 @@
 package com.example.loyalProgram.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -19,6 +20,8 @@ public class LoyalProgram extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "tier_id")
     private Tier tier;
+    private String name;
     private Integer priority;
+    @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal discountPercentage;
 }

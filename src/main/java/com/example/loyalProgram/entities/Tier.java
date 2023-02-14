@@ -1,9 +1,6 @@
 package com.example.loyalProgram.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +21,6 @@ public class Tier extends BaseEntity{
     private Merchant merchant;
     @OneToMany(mappedBy = "tier")
     private List<LoyalProgram> loyalPrograms;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal tierAmount;
 }

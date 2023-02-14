@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client extends BaseEntity{
-
     private String name;
     @OneToMany(mappedBy = "client")
     private List<Sale> sales;
@@ -24,8 +24,9 @@ public class Client extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
-
     @OneToOne
     @JoinColumn(name = "tier_id")
     private Tier tier;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal amountSpend;
 }

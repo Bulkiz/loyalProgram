@@ -25,6 +25,7 @@ public class CardHistory extends BaseEntity{
     private TransactionStatus transactionStatus;
     @Column(columnDefinition = "int2")
     private PointStatus pointStatus;
+    @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal points;
     private LocalDateTime earnDate;
     private LocalDateTime expirationDate;

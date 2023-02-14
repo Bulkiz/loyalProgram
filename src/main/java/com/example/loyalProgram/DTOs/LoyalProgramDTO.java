@@ -2,13 +2,16 @@ package com.example.loyalProgram.DTOs;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientDTO {
+public class LoyalProgramDTO {
     private Integer id;
     private String name;
-    private Integer merchantId;
+    private Integer priority;
+    private BigDecimal discountPercentage;
 }
