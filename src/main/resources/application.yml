@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    password: 5403
+    url: jdbc:postgresql://localhost/loyal_program_test
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
