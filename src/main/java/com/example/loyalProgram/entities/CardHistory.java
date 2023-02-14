@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,8 +22,10 @@ public class CardHistory extends BaseEntity{
     @JoinColumn(name = "card_id")
     private Card card;
     @Column(columnDefinition = "int2")
-    private TransactionStatus status;
-    private Integer points;
+    private TransactionStatus transactionStatus;
+    @Column(columnDefinition = "int2")
+    private PointStatus pointStatus;
+    private BigDecimal points;
     private LocalDateTime earnDate;
     private LocalDateTime expirationDate;
 

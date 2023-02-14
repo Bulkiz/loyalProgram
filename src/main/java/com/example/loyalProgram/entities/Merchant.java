@@ -23,4 +23,7 @@ public class Merchant extends BaseEntity{
 
     @OneToMany(mappedBy = "merchant")
     private List<Tier> tiers;
+
+    @OneToMany(mappedBy = "merchant")
+    private List<Client> clients;
 }
