@@ -1,10 +1,7 @@
 package com.example.loyalProgram.services.impl;
 
-import com.example.loyalProgram.DTOs.SaleDTO;
-import com.example.loyalProgram.entities.Sale;
-import com.example.loyalProgram.repositories.ClientRepository;
-import com.example.loyalProgram.repositories.MerchantRepository;
-import com.example.loyalProgram.repositories.SaleRepository;
+import com.example.loyalProgram.SaleModule.DTOs.SaleDTO;
+import com.example.loyalProgram.ClientModule.repositories.ClientRepository;
 import com.example.loyalProgram.services.SaleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

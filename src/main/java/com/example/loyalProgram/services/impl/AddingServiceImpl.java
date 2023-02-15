@@ -1,7 +1,15 @@
 package com.example.loyalProgram.services.impl;
 
-import com.example.loyalProgram.entities.*;
-import com.example.loyalProgram.repositories.*;
+import com.example.loyalProgram.ClientModule.entities.Card;
+import com.example.loyalProgram.ClientModule.entities.Client;
+import com.example.loyalProgram.ClientModule.repositories.CardRepository;
+import com.example.loyalProgram.ClientModule.repositories.ClientRepository;
+import com.example.loyalProgram.MerchantModule.entities.LoyalProgram;
+import com.example.loyalProgram.MerchantModule.entities.Merchant;
+import com.example.loyalProgram.MerchantModule.entities.Tier;
+import com.example.loyalProgram.MerchantModule.repositories.LoyalProgramRepository;
+import com.example.loyalProgram.MerchantModule.repositories.MerchantRepository;
+import com.example.loyalProgram.MerchantModule.repositories.TierRepository;
 import com.example.loyalProgram.services.AddingService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -27,7 +35,7 @@ public class AddingServiceImpl implements AddingService {
     }
 
     @Override
-    public List<Tier> addTiers(Integer id ,List<Tier> tier) {
+    public List<Tier> addTiers(Integer id , List<Tier> tier) {
         return tier.parallelStream().peek(currentTier -> {
             currentTier.setMerchant(merchantRepository.findById(id).orElseThrow());
             tierRepository.save(currentTier);
