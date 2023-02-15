@@ -1,15 +1,10 @@
 package com.example.loyalProgram.services.impl;
 
 import com.example.loyalProgram.DTOs.ClientDTO;
-import com.example.loyalProgram.DTOs.LoyalProgramDTO;
 import com.example.loyalProgram.DTOs.MerchantDTO;
 import com.example.loyalProgram.DTOs.TierDTO;
-import com.example.loyalProgram.entities.LoyalProgram;
-import com.example.loyalProgram.entities.Merchant;
-import com.example.loyalProgram.entities.Tier;
-import com.example.loyalProgram.repositories.LoyalProgramRepository;
-import com.example.loyalProgram.repositories.MerchantRepository;
-import com.example.loyalProgram.repositories.TierRepository;
+import com.example.loyalProgram.entities.*;
+import com.example.loyalProgram.repositories.*;
 import com.example.loyalProgram.services.AddingService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -18,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,12 +21,9 @@ public class AddingServiceImpl implements AddingService {
     @Autowired private MerchantRepository merchantRepository;
     @Autowired private TierRepository tierRepository;
     @Autowired private LoyalProgramRepository loyalProgramRepository;
+    @Autowired private ClientRepository clientRepository;
+    @Autowired private CardRepository cardRepository;
     @Autowired private ModelMapper modelMapper;
-    @Override
-    public ClientDTO addClient(ClientDTO client) {
-        return null;
-    }
-
     @Override
     public MerchantDTO addMerchant(MerchantDTO merchantDTO) {
         Merchant merchant = modelMapper.map(merchantDTO, Merchant.class);
@@ -57,6 +48,7 @@ public class AddingServiceImpl implements AddingService {
         return tiers.parallelStream().map(tier -> modelMapper.map(tier, TierDTO.class)).toList();
     }
 
+
     @Override
     public List<TierDTO> findAllTiers() {
         return tierRepository.findAll().parallelStream().map(tier -> {
@@ -75,6 +67,24 @@ public class AddingServiceImpl implements AddingService {
 //        return loyalPrograms.parallelStream().map(loyalProgram -> modelMapper.
 //                map(loyalProgram, LoyalProgramDTO.class)).toList();
 //    }
+
+    @Override
+    public List<ClientDTO> addClients(List<ClientDTO> clientDTOs) {
+        List<Client> clients = clientDTOs.parallelStream().map(clientDTO -> {
+            Client client = modelMapper.map(clientDTO,Client.class);
+            client.setAmountSpend(BigDecimal.ZERO);
+            Card card = generateCard();
+            client.setCard(card);
+            return clientRepository.save(client);
+        }).toList();
+        return clients.parallelStream().map(client -> modelMapper.map(client, ClientDTO.class)).toList();
+    }
+
+    private Card generateCard(){
+        Card card = new Card();
+        card.setBalance(BigDecimal.ZERO);
+        return cardRepository.save(card);
+    }
 
 
 //    @Override

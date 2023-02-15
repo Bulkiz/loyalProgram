@@ -1,6 +1,6 @@
 package com.example.loyalProgram.controllers;
 
-import com.example.loyalProgram.DTOs.LoyalProgramDTO;
+import com.example.loyalProgram.DTOs.ClientDTO;
 import com.example.loyalProgram.DTOs.MerchantDTO;
 import com.example.loyalProgram.DTOs.TierDTO;
 import com.example.loyalProgram.services.AddingService;
@@ -27,5 +27,10 @@ public class SaleController {
     @GetMapping("/allTiers")
     public List<TierDTO> findAllTiers(){
         return addingService.findAllTiers();
+    }
+
+    @PostMapping("addClients/")
+    public List<ClientDTO> addClients(@RequestBody List<ClientDTO> clientDTOs){
+        return addingService.addClients(clientDTOs);
     }
 }
