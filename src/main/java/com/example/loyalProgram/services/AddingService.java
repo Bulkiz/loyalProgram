@@ -1,18 +1,18 @@
 package com.example.loyalProgram.services;
 
-import com.example.loyalProgram.DTOs.ClientDTO;
-import com.example.loyalProgram.DTOs.MerchantDTO;
-import com.example.loyalProgram.DTOs.TierDTO;
+import com.example.loyalProgram.entities.Client;
+import com.example.loyalProgram.entities.Merchant;
+import com.example.loyalProgram.entities.Tier;
 
 import java.util.List;
 
 
 public interface AddingService {
-    MerchantDTO addMerchant(MerchantDTO merchantDTO);
+    Merchant addMerchant(Merchant merchant);
 
-    List<TierDTO> addTiers(Integer id, List<TierDTO> tierDTOS);
+    List<Tier> addTiers(Integer id, List<Tier> tier);
 
    // List<LoyalProgramDTO> addLoyalPrograms(Integer tierId, List<LoyalProgramDTO> loyalProgramDTOs);
-    List<ClientDTO> addClients(List<ClientDTO> clientDTOs);
-    List<TierDTO> findAllTiers();
+    List<Client> addClients(List<Client> client);
+    List<Tier> findAllTiers();
 }

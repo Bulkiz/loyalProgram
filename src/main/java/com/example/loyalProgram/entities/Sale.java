@@ -1,15 +1,13 @@
 package com.example.loyalProgram.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,5 +28,7 @@ public class Sale extends BaseEntity{
     private BigDecimal discountedPrice;
     @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal summaryPrice;
+    @OneToMany(mappedBy = "sale")
+    private List<SaleBonus> saleBonusList;
 
 }

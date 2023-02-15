@@ -1,8 +1,5 @@
 package com.example.loyalProgram.services.impl;
 
-import com.example.loyalProgram.DTOs.ClientDTO;
-import com.example.loyalProgram.DTOs.MerchantDTO;
-import com.example.loyalProgram.DTOs.TierDTO;
 import com.example.loyalProgram.entities.*;
 import com.example.loyalProgram.repositories.*;
 import com.example.loyalProgram.services.AddingService;
@@ -25,36 +22,30 @@ public class AddingServiceImpl implements AddingService {
     @Autowired private CardRepository cardRepository;
     @Autowired private ModelMapper modelMapper;
     @Override
-    public MerchantDTO addMerchant(MerchantDTO merchantDTO) {
-        Merchant merchant = modelMapper.map(merchantDTO, Merchant.class);
-        merchantRepository.save(merchant);
-        return modelMapper.map(merchant, MerchantDTO.class);
+    public Merchant addMerchant(Merchant merchant) {
+        return merchantRepository.save(merchant);
     }
 
     @Override
-    public List<TierDTO> addTiers(Integer id ,List<TierDTO> tierDTOS) {
-        List<Tier> tiers = tierDTOS.parallelStream().map(tierDTO -> {
-            Tier tier = modelMapper.map(tierDTO, Tier.class);
-            tier.setMerchant(merchantRepository.findById(id).get());
-            tierRepository.save(tier);
-            List<LoyalProgram> loyalPrograms = tierDTO.getLoyalPrograms().parallelStream().map(loyalProgramDTO -> {
+    public List<Tier> addTiers(Integer id ,List<Tier> tier) {
+        return tier.parallelStream().peek(currentTier -> {
+            currentTier.setMerchant(merchantRepository.findById(id).orElseThrow());
+            tierRepository.save(currentTier);
+            List<LoyalProgram> loyalPrograms = currentTier.getLoyalPrograms().parallelStream().map(loyalProgramDTO -> {
                 LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
-                loyalProgram.setTier(tier);
+                loyalProgram.setTier(currentTier);
                 return loyalProgramRepository.save(loyalProgram);
             }).toList();
-            tier.setLoyalPrograms(loyalPrograms);
-            return tier;
+            currentTier.setLoyalPrograms(loyalPrograms);
         }).toList();
-        return tiers.parallelStream().map(tier -> modelMapper.map(tier, TierDTO.class)).toList();
     }
 
 
     @Override
-    public List<TierDTO> findAllTiers() {
-        return tierRepository.findAll().parallelStream().map(tier -> {
-            tier.setLoyalPrograms(loyalProgramRepository.findAllByTier(tier));
-            return modelMapper.map(tier, TierDTO.class);
-        }).toList();
+    public List<Tier> findAllTiers() {
+        List<Tier> tiers = tierRepository.findAll();
+        tiers.forEach(tier -> tier.setLoyalPrograms(loyalProgramRepository.findAllByTier(tier)));
+        return tiers;
     }
 
 //    @Override
@@ -69,15 +60,13 @@ public class AddingServiceImpl implements AddingService {
 //    }
 
     @Override
-    public List<ClientDTO> addClients(List<ClientDTO> clientDTOs) {
-        List<Client> clients = clientDTOs.parallelStream().map(clientDTO -> {
-            Client client = modelMapper.map(clientDTO,Client.class);
-            client.setAmountSpend(BigDecimal.ZERO);
+    public List<Client> addClients(List<Client> clients) {
+       return clients.parallelStream().map(currentClient -> {
+            currentClient.setAmountSpend(BigDecimal.ZERO);
             Card card = generateCard();
-            client.setCard(card);
-            return clientRepository.save(client);
+            currentClient.setCard(card);
+            return clientRepository.save(currentClient);
         }).toList();
-        return clients.parallelStream().map(client -> modelMapper.map(client, ClientDTO.class)).toList();
     }
 
     private Card generateCard(){
