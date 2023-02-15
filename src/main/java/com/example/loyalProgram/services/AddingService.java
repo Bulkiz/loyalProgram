@@ -15,5 +15,5 @@ public interface AddingService {
 
     List<TierDTO> addTiers(Integer id, List<TierDTO> tierDTOS);
 
-    List<LoyalProgramDTO> addLoyalPrograms(Integer tierId, List<LoyalProgramDTO> loyalProgramDTOs);
+    List<TierDTO> findAllTiers();
 }

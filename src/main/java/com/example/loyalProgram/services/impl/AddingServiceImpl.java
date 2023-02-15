@@ -11,6 +11,7 @@ import com.example.loyalProgram.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.repositories.MerchantRepository;
 import com.example.loyalProgram.repositories.TierRepository;
 import com.example.loyalProgram.services.AddingService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class AddingServiceImpl implements AddingService {
 
     @Autowired private MerchantRepository merchantRepository;
@@ -43,22 +45,36 @@ public class AddingServiceImpl implements AddingService {
         List<Tier> tiers = tierDTOS.parallelStream().map(tierDTO -> {
             Tier tier = modelMapper.map(tierDTO, Tier.class);
             tier.setMerchant(merchantRepository.findById(id).get());
-            return tierRepository.save(tier);
+            tierRepository.save(tier);
+            List<LoyalProgram> loyalPrograms = tierDTO.getLoyalPrograms().parallelStream().map(loyalProgramDTO -> {
+                LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
+                loyalProgram.setTier(tier);
+                return loyalProgramRepository.save(loyalProgram);
+            }).toList();
+            tier.setLoyalPrograms(loyalPrograms);
+            return tier;
         }).toList();
-        return tiers.parallelStream().map(tier -> TierDTO.builder().id(tier.getId()).
-                name(tier.getName()).tierAmount(tier.getTierAmount()).build()).toList();
+        return tiers.parallelStream().map(tier -> modelMapper.map(tier, TierDTO.class)).toList();
     }
 
     @Override
-    public List<LoyalProgramDTO> addLoyalPrograms(Integer tierId, List<LoyalProgramDTO> loyalProgramDTOs) {
-        List<LoyalProgram> loyalPrograms = loyalProgramDTOs.parallelStream().map(loyalProgramDTO -> {
-            LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
-            loyalProgram.setTier(tierRepository.findById(tierId).get());
-            return loyalProgramRepository.save(loyalProgram);
+    public List<TierDTO> findAllTiers() {
+        return tierRepository.findAll().parallelStream().map(tier -> {
+            tier.setLoyalPrograms(loyalProgramRepository.findAllByTier(tier));
+            return modelMapper.map(tier, TierDTO.class);
         }).toList();
-        return loyalPrograms.parallelStream().map(loyalProgram -> modelMapper.
-                map(loyalProgram, LoyalProgramDTO.class)).toList();
     }
+
+//    @Override
+//    public List<LoyalProgramDTO> addLoyalPrograms(Integer tierId, List<LoyalProgramDTO> loyalProgramDTOs) {
+//        List<LoyalProgram> loyalPrograms = loyalProgramDTOs.parallelStream().map(loyalProgramDTO -> {
+//            LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
+//            loyalProgram.setTier(tierRepository.findById(tierId).get());
+//            return loyalProgramRepository.save(loyalProgram);
+//        }).toList();
+//        return loyalPrograms.parallelStream().map(loyalProgram -> modelMapper.
+//                map(loyalProgram, LoyalProgramDTO.class)).toList();
+//    }
 
 
 //    @Override

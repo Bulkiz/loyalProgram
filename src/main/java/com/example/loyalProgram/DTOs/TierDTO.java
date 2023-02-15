@@ -14,4 +14,5 @@ public class TierDTO {
     private Integer id;
     private String name;
     private BigDecimal tierAmount;
+    private List<LoyalProgramDTO> loyalPrograms;
 }

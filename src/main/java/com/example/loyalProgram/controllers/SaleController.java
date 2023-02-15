@@ -24,8 +24,8 @@ public class SaleController {
         return addingService.addTiers(merchantId, tierDTOS);
     }
 
-    @PostMapping("addLoyalProgram/{tierId}")
-    public List<LoyalProgramDTO> addLoyalProgramsToTier(@PathVariable Integer tierId, @RequestBody List<LoyalProgramDTO> loyalProgramDTOs){
-        return addingService.addLoyalPrograms(tierId, loyalProgramDTOs);
+    @GetMapping("/allTiers")
+    public List<TierDTO> findAllTiers(){
+        return addingService.findAllTiers();
     }
 }
