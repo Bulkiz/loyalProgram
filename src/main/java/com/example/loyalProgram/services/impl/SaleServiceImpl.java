@@ -11,7 +11,6 @@ import com.example.loyalProgram.MerchantModule.entities.Tier;
 import com.example.loyalProgram.MerchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.MerchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.MerchantModule.repositories.TierRepository;
-import com.example.loyalProgram.SaleModule.DTOs.SaleDTO;
 import com.example.loyalProgram.ClientModule.repositories.ClientRepository;
 import com.example.loyalProgram.SaleModule.entities.Sale;
 import com.example.loyalProgram.SaleModule.repositories.SaleRepository;
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -48,31 +48,29 @@ public class SaleServiceImpl implements SaleService {
     ModelMapper modelMapper;
 
     @Override
-    public void makeSale(SaleDTO saleDTO) {
+    public void makeSale(Sale currSale) {
         Sale sale = new Sale();
-
-        List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(saleDTO);
-
+        List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
         for (LoyalProgram loyalProgram : loyalPrograms) {
             BigDecimal discountPercentage = loyalProgram.getDiscountPercentage();
 
-            if (loyalProgram.getName().equals("Discount")) {
-                sale = discountSaleMethod(saleDTO, discountPercentage);
+            if (loyalProgram.getName().equalsIgnoreCase("Discount")) {
+                sale = discountSaleMethod(currSale, discountPercentage);
                 saleRepository.save(sale);
             } else if (loyalProgram.getName().equals("AddBonusPoints")) {
-                cardTransaction(getCurrClient(saleDTO), sale, discountPercentage);
+                cardTransaction(getCurrClient(currSale), sale, discountPercentage);
             }
         }
     }
 
-    private Sale discountSaleMethod(SaleDTO saleDTO, BigDecimal discountPercentage) {
+    private Sale discountSaleMethod(Sale sale, BigDecimal discountPercentage) {
         Sale currSale = new Sale();
-        currSale.setClient(clientRepository.findById(saleDTO.getClientId()).orElseThrow());
-        currSale.setMerchant(merchantRepository.findById(saleDTO.getMerchantId()).orElseThrow());
-        currSale.setOriginalPrice(saleDTO.getPrice());
-        BigDecimal discountedPrice = calculatePercentage(saleDTO.getPrice(), discountPercentage);
+        currSale.setClient(clientRepository.findById(sale.getClient().getId()).orElseThrow());
+        currSale.setMerchant(merchantRepository.findById(sale.getMerchant().getId()).orElseThrow());
+        currSale.setOriginalPrice(sale.getOriginalPrice());
+        BigDecimal discountedPrice = calculatePercentage(sale.getOriginalPrice(), discountPercentage);
         currSale.setDiscountedPrice(discountedPrice);
-        currSale.setSummaryPrice(saleDTO.getPrice().subtract(discountedPrice));
+        currSale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
         return currSale;
     }
 
@@ -95,19 +93,19 @@ public class SaleServiceImpl implements SaleService {
         cardHistory.setCard(card);
         cardHistoryRepository.save(cardHistory);
     }
-    private List<LoyalProgram> getLoyalProgramsSorted(SaleDTO saleDTO) {
-        Client currClient = getCurrClient(saleDTO);
+    private List<LoyalProgram> getLoyalProgramsSorted(Sale sale) {
+        Client currClient = getCurrClient(sale);
         Tier currTier = tierRepository.findById(currClient.getTier().getId()).orElseThrow();
         List<LoyalProgram> loyalPrograms = loyalProgramRepository.findAllByTier(currTier);
         loyalPrograms.sort(Comparator.comparing(LoyalProgram::getPriority));
         return loyalPrograms;
     }
 
-    private Client getCurrClient(SaleDTO saleDTO) {
-        return clientRepository.findById(saleDTO.getClientId()).orElseThrow();
+    private Client getCurrClient(Sale sale) {
+        return clientRepository.findById(sale.getClient().getId()).orElseThrow();
     }
 
     private BigDecimal calculatePercentage(BigDecimal price, BigDecimal discountPercentage) {
-        return (price.multiply(discountPercentage)).divide(BigDecimal.valueOf(100));
+        return (price.multiply(discountPercentage)).divide(BigDecimal.valueOf(100), RoundingMode.CEILING);
     }
 }

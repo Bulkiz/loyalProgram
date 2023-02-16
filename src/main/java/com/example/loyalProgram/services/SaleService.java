@@ -1,7 +1,7 @@
 package com.example.loyalProgram.services;
 
-import com.example.loyalProgram.SaleModule.DTOs.SaleDTO;
+import com.example.loyalProgram.SaleModule.entities.Sale;
 
 public interface SaleService {
-    void makeSale(SaleDTO saleDTO);
+    void makeSale(Sale sale);
 }
