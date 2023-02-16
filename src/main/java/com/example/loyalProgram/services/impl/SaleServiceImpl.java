@@ -15,6 +15,8 @@ import com.example.loyalProgram.merchantModule.repositories.LoyalProgramReposito
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.entities.SaleBonus;
+import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.services.SaleService;
 import org.modelmapper.ModelMapper;
@@ -37,6 +39,7 @@ public class SaleServiceImpl implements SaleService {
     @Autowired CardHistoryRepository cardHistoryRepository;
     @Autowired TierRepository tierRepository;
     @Autowired LoyalProgramRepository loyalProgramRepository;
+    @Autowired SaleBonusRepository saleBonusRepository;
     @Autowired ModelMapper modelMapper;
 
     @Override
@@ -51,13 +54,25 @@ public class SaleServiceImpl implements SaleService {
                 case DISCOUNT -> {
                     sale = discountSaleMethod(currSale, discountPercentage);
                     saleRepository.save(sale);
+                    saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
                 }
-                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+                case ADD_POINTS -> {
+                    cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+                }
                 default -> {
                     throw new IllegalArgumentException();
                 }
             }
         }
+    }
+
+    private SaleBonus generateSaleBonus(Sale sale, LoyalProgram loyalProgram) {
+        SaleBonus saleBonus = new SaleBonus();
+        saleBonus.setLoyalProgram(loyalProgram);
+        saleBonus.setSale(sale);
+        saleBonus.setCurrentPrice(sale.getSummaryPrice());
+        saleBonus.setSavedMoved(sale.getDiscountedPrice());
+        return saleBonus;
     }
 
     private Sale discountSaleMethod(Sale sale, BigDecimal discountPercentage) {
