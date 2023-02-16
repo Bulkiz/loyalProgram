@@ -29,13 +29,14 @@ public class AddingServiceImpl implements AddingService {
     @Autowired private ClientRepository clientRepository;
     @Autowired private CardRepository cardRepository;
     @Autowired private ModelMapper modelMapper;
+
     @Override
     public Merchant addMerchant(Merchant merchant) {
         return merchantRepository.save(merchant);
     }
 
     @Override
-    public List<Tier> addTiers(Integer id , List<Tier> tier) {
+    public List<Tier> addTiers(Integer id, List<Tier> tier) {
         return tier.parallelStream().peek(currentTier -> {
             currentTier.setMerchant(merchantRepository.findById(id).orElseThrow());
             tierRepository.save(currentTier);
@@ -69,7 +70,7 @@ public class AddingServiceImpl implements AddingService {
 
     @Override
     public List<Client> addClients(List<Client> clients) {
-       return clients.parallelStream().map(currentClient -> {
+        return clients.parallelStream().map(currentClient -> {
             currentClient.setAmountSpend(BigDecimal.ZERO);
             Card card = generateCard();
             currentClient.setCard(card);
@@ -77,7 +78,7 @@ public class AddingServiceImpl implements AddingService {
         }).toList();
     }
 
-    private Card generateCard(){
+    private Card generateCard() {
         Card card = new Card();
         card.setBalance(BigDecimal.ZERO);
         return cardRepository.save(card);

@@ -6,16 +6,16 @@ import com.example.loyalProgram.clientModule.entities.CardHistory;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
+import com.example.loyalProgram.enums.PointStatus;
+import com.example.loyalProgram.enums.TransactionStatus;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
-import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
-import com.example.loyalProgram.enums.PointStatus;
-import com.example.loyalProgram.enums.TransactionStatus;
 import com.example.loyalProgram.services.SaleService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,18 @@ public class SaleServiceImpl implements SaleService {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
         for (LoyalProgram loyalProgram : loyalPrograms) {
+
             BigDecimal discountPercentage = loyalProgram.getDiscountPercentage();
-            if (loyalProgram.getName().equalsIgnoreCase("Discount")) {
-                sale = discountSaleMethod(currSale, discountPercentage);
-                saleRepository.save(sale);
-            } else if (loyalProgram.getName().equals("AddBonusPoints")) {
-                cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+
+            switch (loyalProgram.getType()) {
+                case DISCOUNT -> {
+                    sale = discountSaleMethod(currSale, discountPercentage);
+                    saleRepository.save(sale);
+                }
+                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+                default -> {
+                    throw new IllegalArgumentException();
+                }
             }
         }
     }
@@ -84,6 +90,7 @@ public class SaleServiceImpl implements SaleService {
         cardHistory.setCard(card);
         cardHistoryRepository.save(cardHistory);
     }
+
     private List<LoyalProgram> getLoyalProgramsSorted(Sale sale) {
         Client currClient = getCurrClient(sale);
         Tier currTier = tierRepository.findById(currClient.getTier().getId()).orElseThrow();
