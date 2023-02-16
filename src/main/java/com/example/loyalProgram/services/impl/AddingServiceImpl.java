@@ -1,15 +1,15 @@
 package com.example.loyalProgram.services.impl;
 
-import com.example.loyalProgram.ClientModule.entities.Card;
-import com.example.loyalProgram.ClientModule.entities.Client;
-import com.example.loyalProgram.ClientModule.repositories.CardRepository;
-import com.example.loyalProgram.ClientModule.repositories.ClientRepository;
-import com.example.loyalProgram.MerchantModule.entities.LoyalProgram;
-import com.example.loyalProgram.MerchantModule.entities.Merchant;
-import com.example.loyalProgram.MerchantModule.entities.Tier;
-import com.example.loyalProgram.MerchantModule.repositories.LoyalProgramRepository;
-import com.example.loyalProgram.MerchantModule.repositories.MerchantRepository;
-import com.example.loyalProgram.MerchantModule.repositories.TierRepository;
+import com.example.loyalProgram.clientModule.entities.Card;
+import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
+import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
+import com.example.loyalProgram.merchantModule.entities.Merchant;
+import com.example.loyalProgram.merchantModule.entities.Tier;
+import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
+import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
+import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.services.AddingService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;

@@ -1,19 +1,19 @@
 package com.example.loyalProgram.services.impl;
 
 
-import com.example.loyalProgram.ClientModule.entities.Card;
-import com.example.loyalProgram.ClientModule.entities.CardHistory;
-import com.example.loyalProgram.ClientModule.entities.Client;
-import com.example.loyalProgram.ClientModule.repositories.CardHistoryRepository;
-import com.example.loyalProgram.ClientModule.repositories.CardRepository;
-import com.example.loyalProgram.MerchantModule.entities.LoyalProgram;
-import com.example.loyalProgram.MerchantModule.entities.Tier;
-import com.example.loyalProgram.MerchantModule.repositories.LoyalProgramRepository;
-import com.example.loyalProgram.MerchantModule.repositories.MerchantRepository;
-import com.example.loyalProgram.MerchantModule.repositories.TierRepository;
-import com.example.loyalProgram.ClientModule.repositories.ClientRepository;
-import com.example.loyalProgram.SaleModule.entities.Sale;
-import com.example.loyalProgram.SaleModule.repositories.SaleRepository;
+import com.example.loyalProgram.clientModule.entities.Card;
+import com.example.loyalProgram.clientModule.entities.CardHistory;
+import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
+import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
+import com.example.loyalProgram.merchantModule.entities.Tier;
+import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
+import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
+import com.example.loyalProgram.merchantModule.repositories.TierRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
+import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
 import com.example.loyalProgram.services.SaleService;
@@ -30,22 +30,14 @@ import java.util.List;
 @Service
 public class SaleServiceImpl implements SaleService {
 
-    @Autowired
-    ClientRepository clientRepository;
-    @Autowired
-    MerchantRepository merchantRepository;
-    @Autowired
-    SaleRepository saleRepository;
-    @Autowired
-    CardRepository cardRepository;
-    @Autowired
-    CardHistoryRepository cardHistoryRepository;
-    @Autowired
-    TierRepository tierRepository;
-    @Autowired
-    LoyalProgramRepository loyalProgramRepository;
-    @Autowired
-    ModelMapper modelMapper;
+    @Autowired ClientRepository clientRepository;
+    @Autowired MerchantRepository merchantRepository;
+    @Autowired SaleRepository saleRepository;
+    @Autowired CardRepository cardRepository;
+    @Autowired CardHistoryRepository cardHistoryRepository;
+    @Autowired TierRepository tierRepository;
+    @Autowired LoyalProgramRepository loyalProgramRepository;
+    @Autowired ModelMapper modelMapper;
 
     @Override
     public void makeSale(Sale currSale) {
@@ -53,7 +45,6 @@ public class SaleServiceImpl implements SaleService {
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
         for (LoyalProgram loyalProgram : loyalPrograms) {
             BigDecimal discountPercentage = loyalProgram.getDiscountPercentage();
-
             if (loyalProgram.getName().equalsIgnoreCase("Discount")) {
                 sale = discountSaleMethod(currSale, discountPercentage);
                 saleRepository.save(sale);

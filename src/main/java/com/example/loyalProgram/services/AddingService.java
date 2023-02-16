@@ -1,8 +1,8 @@
 package com.example.loyalProgram.services;
 
-import com.example.loyalProgram.ClientModule.entities.Client;
-import com.example.loyalProgram.MerchantModule.entities.Merchant;
-import com.example.loyalProgram.MerchantModule.entities.Tier;
+import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.merchantModule.entities.Merchant;
+import com.example.loyalProgram.merchantModule.entities.Tier;
 
 import java.util.List;
 

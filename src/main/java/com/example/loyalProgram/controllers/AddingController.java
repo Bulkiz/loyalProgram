@@ -1,11 +1,11 @@
 package com.example.loyalProgram.controllers;
 
-import com.example.loyalProgram.ClientModule.DTOs.ClientDTO;
-import com.example.loyalProgram.MerchantModule.DTOs.MerchantDTO;
-import com.example.loyalProgram.MerchantModule.DTOs.TierDTO;
-import com.example.loyalProgram.ClientModule.entities.Client;
-import com.example.loyalProgram.MerchantModule.entities.Merchant;
-import com.example.loyalProgram.MerchantModule.entities.Tier;
+import com.example.loyalProgram.clientModule.DTOs.ClientDTO;
+import com.example.loyalProgram.merchantModule.DTOs.MerchantDTO;
+import com.example.loyalProgram.merchantModule.DTOs.TierDTO;
+import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.merchantModule.entities.Merchant;
+import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.services.AddingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
