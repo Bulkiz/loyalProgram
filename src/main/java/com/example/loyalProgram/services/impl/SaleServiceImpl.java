@@ -59,6 +59,9 @@ public class SaleServiceImpl implements SaleService {
                 case ADD_POINTS -> {
                     cardTransaction(getCurrClient(currSale), sale, discountPercentage);
                 }
+                case USE_POINTS -> {
+
+                }
                 default -> {
                     throw new IllegalArgumentException();
                 }

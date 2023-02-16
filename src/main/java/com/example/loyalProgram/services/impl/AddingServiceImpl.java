@@ -57,17 +57,6 @@ public class AddingServiceImpl implements AddingService {
         return tiers;
     }
 
-//    @Override
-//    public List<LoyalProgramDTO> addLoyalPrograms(Integer tierId, List<LoyalProgramDTO> loyalProgramDTOs) {
-//        List<LoyalProgram> loyalPrograms = loyalProgramDTOs.parallelStream().map(loyalProgramDTO -> {
-//            LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
-//            loyalProgram.setTier(tierRepository.findById(tierId).get());
-//            return loyalProgramRepository.save(loyalProgram);
-//        }).toList();
-//        return loyalPrograms.parallelStream().map(loyalProgram -> modelMapper.
-//                map(loyalProgram, LoyalProgramDTO.class)).toList();
-//    }
-
     @Override
     public List<Client> addClients(List<Client> clients) {
         return clients.parallelStream().map(currentClient -> {
@@ -83,19 +72,4 @@ public class AddingServiceImpl implements AddingService {
         card.setBalance(BigDecimal.ZERO);
         return cardRepository.save(card);
     }
-
-
-//    @Override
-//    public MerchantDTO addMerchant(MerchantDTO merchantDTO) {
-//        List<Tier> tier = merchantDTO.getTiers().parallelStream().map(tierDTO -> {
-//            Tier tier1 = modelMapper.map(tierDTO, Tier.class);
-//            tier1.setMerchant(modelMapper.map(merchantDTO, Merchant.class));
-//            tier1.getLoyalPrograms().parallelStream().forEach(loyalProgram -> loyalProgram.setTier(tier1));
-//            return tier1;
-//        }).toList();
-//
-//        return null;
-//    }
-
-
 }
