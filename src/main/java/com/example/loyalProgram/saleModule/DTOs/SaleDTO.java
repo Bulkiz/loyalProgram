@@ -12,4 +12,5 @@ public class SaleDTO {
     private Integer clientId;
     private Integer merchantId;
     private BigDecimal price;
+    private BigDecimal usedPoints;
 }

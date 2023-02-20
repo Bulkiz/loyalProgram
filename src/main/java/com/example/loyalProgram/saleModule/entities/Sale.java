@@ -33,5 +33,7 @@ public class Sale extends BaseEntity {
     private BigDecimal summaryPrice;
     @OneToMany(mappedBy = "sale")
     private List<SaleBonus> saleBonusList;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal usedPoints;
 
 }

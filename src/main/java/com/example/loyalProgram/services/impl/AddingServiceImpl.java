@@ -16,7 +16,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -49,7 +48,6 @@ public class AddingServiceImpl implements AddingService {
         }).toList();
     }
 
-
     @Override
     public List<Tier> findAllTiers() {
         List<Tier> tiers = tierRepository.findAll();
@@ -60,16 +58,14 @@ public class AddingServiceImpl implements AddingService {
     @Override
     public List<Client> addClients(List<Client> clients) {
         return clients.parallelStream().map(currentClient -> {
-            currentClient.setAmountSpend(BigDecimal.ZERO);
-            Card card = generateCard();
-            currentClient.setCard(card);
+        generateAndSetCard(currentClient);
             return clientRepository.save(currentClient);
         }).toList();
     }
 
-    private Card generateCard() {
+    private void generateAndSetCard(Client client) {
         Card card = new Card();
-        card.setBalance(BigDecimal.ZERO);
-        return cardRepository.save(card);
+        client.setCard(card);
+        cardRepository.save(card);
     }
 }

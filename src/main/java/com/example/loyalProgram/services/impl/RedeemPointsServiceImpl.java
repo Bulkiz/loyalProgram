@@ -18,15 +18,15 @@ public class RedeemPointsServiceImpl implements RedeemPointsService {
     @Autowired CardRepository cardRepository;
     @Override
     public void updateStatusByDate() {
-        LocalDateTime currentDate = LocalDateTime.now();
-        List<CardHistory> cardHistoryList = cardHistoryRepository.findAll();
-        for(CardHistory cardHistory:cardHistoryList) {
-            LocalDateTime expirationDate = cardHistory.getExpirationDate();
-            if(currentDate.isAfter(expirationDate) && cardHistory.getPointStatus().equals(PointStatus.AVAILABLE)){
-                cardHistory.setPointStatus(PointStatus.EXPIRED);
-            }
-            cardHistoryRepository.save(cardHistory);
-        }
+//        LocalDateTime currentDate = LocalDateTime.now();
+//        List<CardHistory> cardHistoryList = cardHistoryRepository.findAll();
+//        for(CardHistory cardHistory:cardHistoryList) {
+//            LocalDateTime expirationDate = cardHistory.getExpirationDate();
+//            if(currentDate.isAfter(expirationDate) && cardHistory.getPointStatus().equals(PointStatus.AVAILABLE)){
+//                cardHistory.setPointStatus(PointStatus.EXPIRED);
+//            }
+//            cardHistoryRepository.save(cardHistory);
+//        }
     }
 
 

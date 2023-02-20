@@ -21,6 +21,7 @@ public class SaleMapper {
         sale.setMerchant(merchant);
         sale.setClient(client);
         sale.setOriginalPrice(saleDTO.getPrice());
+        sale.setUsedPoints(saleDTO.getUsedPoints());
         return sale;
     }
 }

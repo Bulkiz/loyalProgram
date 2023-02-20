@@ -32,5 +32,5 @@ public class Client extends BaseEntity {
     @JoinColumn(name = "tier_id")
     private Tier tier;
     @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal amountSpend;
+    private BigDecimal amountSpend = BigDecimal.ZERO;
 }

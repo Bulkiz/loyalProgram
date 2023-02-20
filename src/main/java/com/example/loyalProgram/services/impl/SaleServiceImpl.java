@@ -19,6 +19,7 @@ import com.example.loyalProgram.saleModule.entities.SaleBonus;
 import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.services.SaleService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,7 @@ public class SaleServiceImpl implements SaleService {
     @Autowired ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public void makeSale(Sale currSale) {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
@@ -60,6 +62,9 @@ public class SaleServiceImpl implements SaleService {
                     cardTransaction(getCurrClient(currSale), sale, discountPercentage);
                 }
                 case USE_POINTS -> {
+                    Client client = getCurrClient(currSale);
+                    Card card = client.getCard();
+                    updateStatusByDate(card);
 
                 }
                 default -> {
@@ -79,14 +84,13 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private Sale discountSaleMethod(Sale sale, BigDecimal discountPercentage) {
-        Sale currSale = new Sale();
-        currSale.setClient(clientRepository.findById(sale.getClient().getId()).orElseThrow());
-        currSale.setMerchant(merchantRepository.findById(sale.getMerchant().getId()).orElseThrow());
-        currSale.setOriginalPrice(sale.getOriginalPrice());
+        sale.setClient(clientRepository.findById(sale.getClient().getId()).orElseThrow());
+        sale.setMerchant(merchantRepository.findById(sale.getMerchant().getId()).orElseThrow());
+        sale.setOriginalPrice(sale.getOriginalPrice());
         BigDecimal discountedPrice = calculatePercentage(sale.getOriginalPrice(), discountPercentage);
-        currSale.setDiscountedPrice(discountedPrice);
-        currSale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
-        return currSale;
+        sale.setDiscountedPrice(discountedPrice);
+        sale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
+        return sale;
     }
 
     private void cardTransaction(Client currClient, Sale sale, BigDecimal discountPercentage) {
@@ -122,6 +126,20 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private BigDecimal calculatePercentage(BigDecimal price, BigDecimal discountPercentage) {
-        return (price.multiply(discountPercentage)).divide(BigDecimal.valueOf(100), RoundingMode.CEILING);
+        return price.multiply(discountPercentage).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR);
+    }
+
+    private void updateStatusByDate(Card card) {
+        LocalDateTime currentDate = LocalDateTime.now();
+        List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatus(card, PointStatus.AVAILABLE);
+            cardHistoryList.forEach(cardHistory -> {
+                if (cardHistory.getPointStatus() == PointStatus.AVAILABLE && currentDate.isAfter(cardHistory.getExpirationDate())){
+                    cardHistory.setPointStatus(PointStatus.EXPIRED);
+                    cardHistoryRepository.save(cardHistory);
+                    card.setBalance(card.getBalance().subtract(cardHistory.getPoints()));
+                    cardRepository.save(card);
+                }
+            });
+
     }
 }

@@ -17,5 +17,5 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class Card extends BaseEntity {
     @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 }
