@@ -34,6 +34,6 @@ public class CardHistory extends BaseEntity {
     private LocalDateTime expirationDate;
     @OneToOne
     @JoinColumn(name = "points_ref_id")
-    private CardHistory points_ref;
+    private CardHistory pointsRef;
 
 }

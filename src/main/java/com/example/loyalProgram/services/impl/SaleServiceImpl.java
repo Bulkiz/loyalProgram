@@ -58,18 +58,17 @@ public class SaleServiceImpl implements SaleService {
                     saleRepository.save(sale);
                     saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
                 }
-                case ADD_POINTS -> {
-                    cardTransaction(getCurrClient(currSale), sale, discountPercentage);
-                }
+                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+
                 case USE_POINTS -> {
                     Client client = getCurrClient(currSale);
                     Card card = client.getCard();
-                    updateStatusByDate(card);
+                    updateStatusAndBalanceByDate(card);
+                    redeemPoints(card, currSale.getUsedPoints());
 
                 }
-                default -> {
-                    throw new IllegalArgumentException();
-                }
+                default -> throw new IllegalArgumentException();
+
             }
         }
     }
@@ -129,7 +128,7 @@ public class SaleServiceImpl implements SaleService {
         return price.multiply(discountPercentage).divide(BigDecimal.valueOf(100), RoundingMode.FLOOR);
     }
 
-    private void updateStatusByDate(Card card) {
+    private void updateStatusAndBalanceByDate(Card card) {
         LocalDateTime currentDate = LocalDateTime.now();
         List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatus(card, PointStatus.AVAILABLE);
             cardHistoryList.forEach(cardHistory -> {
@@ -140,6 +139,36 @@ public class SaleServiceImpl implements SaleService {
                     cardRepository.save(card);
                 }
             });
+    }
 
+    private void redeemPoints(Card card, BigDecimal usedPoints){
+        BigDecimal cardBalance = card.getBalance();
+        if (cardBalance.compareTo(usedPoints) >= 0){
+            card.setBalance(cardBalance.subtract(usedPoints));
+            List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatus(card, PointStatus.AVAILABLE);
+            while (usedPoints.compareTo(BigDecimal.ZERO) > 0){
+                CardHistory newCardHistory = new CardHistory();
+                CardHistory currentCardHistory = cardHistoryList.stream().findFirst().orElseThrow();
+                if (usedPoints.subtract(currentCardHistory.getPoints()).compareTo(BigDecimal.ZERO) > 0){
+                    currentCardHistory.setPointStatus(PointStatus.UNAVAILABLE);
+                    cardHistoryList.remove(cardHistoryRepository.save(currentCardHistory));
+                    newCardHistory.setEarnDate(LocalDateTime.now());
+                    newCardHistory.setTransactionStatus(TransactionStatus.USED);
+                    newCardHistory.setPoints(currentCardHistory.getPoints());
+                    newCardHistory.setPointsRef(currentCardHistory);
+                    cardHistoryRepository.save(newCardHistory);
+                } else {
+                    currentCardHistory.setPointStatus(PointStatus.UNAVAILABLE);
+                    cardHistoryList.remove(cardHistoryRepository.save(currentCardHistory));
+                    newCardHistory.setEarnDate(LocalDateTime.now());
+                    newCardHistory.setTransactionStatus(TransactionStatus.USED);
+                    newCardHistory.setPoints(usedPoints);
+                    newCardHistory.setPointsRef(currentCardHistory);
+                    cardHistoryRepository.save(newCardHistory);
+                }
+                usedPoints = usedPoints.subtract(currentCardHistory.getPoints());
+            }
+
+        }
     }
 }
