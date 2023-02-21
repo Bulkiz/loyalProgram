@@ -29,11 +29,14 @@ public class CardHistory extends BaseEntity {
     @Column(columnDefinition = "int2")
     private PointStatus pointStatus;
     @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal points;
+    private BigDecimal receivedPoints;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal expiredPoints = BigDecimal.ZERO;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal usedPoints = BigDecimal.ZERO;
+    @Column(columnDefinition = "numeric(19, 2)")
+    private BigDecimal availablePoints;
     private LocalDateTime earnDate;
     private LocalDateTime expirationDate;
-    @OneToOne
-    @JoinColumn(name = "points_ref_id")
-    private CardHistory pointsRef;
 
 }
