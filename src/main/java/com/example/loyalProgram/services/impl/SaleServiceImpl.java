@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.util.Comparator;
 import java.util.List;
 
@@ -48,27 +49,39 @@ public class SaleServiceImpl implements SaleService {
     public void makeSale(Sale currSale) {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
-        for (LoyalProgram loyalProgram : loyalPrograms) {
 
-            BigDecimal discountPercentage = loyalProgram.getDiscountPercentage();
+        BigDecimal birthdayDiscountPercentage = BigDecimal.ZERO;
+
+        for (LoyalProgram loyalProgram : loyalPrograms) {
 
             switch (loyalProgram.getType()) {
                 case DISCOUNT -> {
-                    sale = discountSaleMethod(currSale, discountPercentage);
+                    sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
                     saleRepository.save(sale);
                     saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
+                }
+                case BIRTHDAY -> {
+                    if (checkBirthday(currSale)) {
+                        birthdayDiscountPercentage = birthdayDiscountPercentage.add(loyalProgram.getDiscountPercentage());
+                    }
                 }
                 case USE_POINTS -> {
                     Card card = getCurrClient(currSale).getCard();
                     updateStatusAndBalanceByDate(card);
                     redeemPoints(card, currSale.getUsedPoints(), sale);
                 }
-                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, loyalProgram.getDiscountPercentage());
 
-                default -> System.out.println("!!"); //throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException();
 
             }
         }
+    }
+
+    private boolean checkBirthday(Sale currSale) {
+        MonthDay birthday = MonthDay.from(getCurrClient(currSale).getBirthday());
+        MonthDay today = MonthDay.now();
+        return birthday.equals(today);
     }
 
     private SaleBonus generateSaleBonus(Sale sale, LoyalProgram loyalProgram) {

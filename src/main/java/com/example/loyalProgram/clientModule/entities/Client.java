@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Client extends BaseEntity {
     private String name;
+
+    private LocalDate birthday;
     @OneToMany(mappedBy = "client")
     private List<Sale> sales;
     @OneToOne
