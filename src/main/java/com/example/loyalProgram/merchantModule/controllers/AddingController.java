@@ -1,12 +1,13 @@
-package com.example.loyalProgram.controllers;
+package com.example.loyalProgram.merchantModule.controllers;
 
 import com.example.loyalProgram.clientModule.DTOs.ClientDTO;
 import com.example.loyalProgram.merchantModule.DTOs.MerchantDTO;
 import com.example.loyalProgram.merchantModule.DTOs.TierDTO;
 import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.services.AddingService;
+import com.example.loyalProgram.merchantModule.services.AddingService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,13 @@ public class AddingController {
     @PostMapping("addTiers/{merchantId}")
     public List<TierDTO> addTiersToMerchant(@PathVariable Integer merchantId, @RequestBody List<TierDTO> tierDTOS){
         return addingService.addTiers(merchantId, tierDTOS.parallelStream().
-                map(tier -> modelMapper.map(tier, Tier.class)).toList()).parallelStream().
+                map(tierDTO -> {
+                   List<LoyalProgram> loyalPrograms = tierDTO.getLoyalPrograms().parallelStream()
+                            .map(loyalProgramDTO -> modelMapper.map(loyalProgramDTO, LoyalProgram.class)).toList();
+                    Tier tier = modelMapper.map(tierDTO, Tier.class);
+                    tier.setLoyalPrograms(loyalPrograms);
+                    return tier;
+                }).toList()).parallelStream().
                 map(tier -> modelMapper.map(tier, TierDTO.class)).toList();
     }
 

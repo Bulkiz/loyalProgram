@@ -1,8 +1,8 @@
-package com.example.loyalProgram.controllers;
+package com.example.loyalProgram.saleModule.controllers;
 
 import com.example.loyalProgram.saleModule.DTOs.SaleDTO;
 import com.example.loyalProgram.saleModule.DTOs.SaleMapper;
-import com.example.loyalProgram.services.SaleService;
+import com.example.loyalProgram.saleModule.services.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

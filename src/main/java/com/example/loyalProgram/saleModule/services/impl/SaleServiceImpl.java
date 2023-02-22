@@ -1,4 +1,4 @@
-package com.example.loyalProgram.services.impl;
+package com.example.loyalProgram.saleModule.services.impl;
 
 
 import com.example.loyalProgram.clientModule.entities.Card;
@@ -18,9 +18,8 @@ import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.entities.SaleBonus;
 import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
-import com.example.loyalProgram.services.SaleService;
+import com.example.loyalProgram.saleModule.services.SaleService;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,46 +33,38 @@ import java.util.List;
 @Service
 public class SaleServiceImpl implements SaleService {
 
-    @Autowired ClientRepository clientRepository;
-    @Autowired MerchantRepository merchantRepository;
-    @Autowired SaleRepository saleRepository;
-    @Autowired CardRepository cardRepository;
-    @Autowired CardHistoryRepository cardHistoryRepository;
-    @Autowired TierRepository tierRepository;
-    @Autowired LoyalProgramRepository loyalProgramRepository;
-    @Autowired SaleBonusRepository saleBonusRepository;
-    @Autowired ModelMapper modelMapper;
+    @Autowired private ClientRepository clientRepository;
+    @Autowired private MerchantRepository merchantRepository;
+    @Autowired private SaleRepository saleRepository;
+    @Autowired private CardRepository cardRepository;
+    @Autowired private CardHistoryRepository cardHistoryRepository;
+    @Autowired private TierRepository tierRepository;
+    @Autowired private LoyalProgramRepository loyalProgramRepository;
+    @Autowired private SaleBonusRepository saleBonusRepository;
 
     @Override
     @Transactional
     public void makeSale(Sale currSale) {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
-
         BigDecimal birthdayDiscountPercentage = BigDecimal.ZERO;
-
         for (LoyalProgram loyalProgram : loyalPrograms) {
-
             switch (loyalProgram.getType()) {
-
                 case BIRTHDAY -> {
                     if (checkBirthday(currSale)) {
                         birthdayDiscountPercentage = birthdayDiscountPercentage.add(loyalProgram.getDiscountPercentage());
                     }
                 }
-
                 case DISCOUNT -> {
                     sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
                     saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
                 }
-
                 case USE_POINTS -> {
                     Card card = getCurrClient(currSale).getCard();
                     updateStatusAndBalanceByDate(card);
                     redeemPoints(card, currSale.getUsedPoints(), sale);
                 }
                 case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, loyalProgram.getDiscountPercentage());
-
                 default -> throw new IllegalArgumentException();
             }
         }
@@ -86,12 +77,12 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private SaleBonus generateSaleBonus(Sale sale, LoyalProgram loyalProgram) {
-        SaleBonus saleBonus = new SaleBonus();
-        saleBonus.setLoyalProgram(loyalProgram);
-        saleBonus.setSale(sale);
-        saleBonus.setCurrentPrice(sale.getSummaryPrice());
-        saleBonus.setSavedMoved(sale.getDiscountedPrice());
-        return saleBonus;
+       return SaleBonus.builder()
+                .loyalProgram(loyalProgram)
+                .sale(sale)
+                .currentPrice(sale.getSummaryPrice())
+                .savedMoney(sale.getDiscountedPrice())
+                .build();
     }
 
     private Sale discountSaleMethod(Sale sale, BigDecimal discountPercentage) {
@@ -114,16 +105,16 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private void generateCardHistory(Card card, BigDecimal currPoints) {
-        CardHistory cardHistory = new CardHistory();
         LocalDateTime earnDate = LocalDateTime.now();
-        cardHistory.setEarnDate(earnDate);
-        cardHistory.setExpirationDate(earnDate.plusDays(10));
-        cardHistory.setPointStatus(PointStatus.AVAILABLE);
-        cardHistory.setReceivedPoints(currPoints);
-        cardHistory.setAvailablePoints(currPoints);
-        cardHistory.setTransactionStatus(TransactionStatus.RECEIVED);
-        cardHistory.setCard(card);
-        cardHistoryRepository.save(cardHistory);
+        cardHistoryRepository.save(CardHistory.builder().
+                earnDate(earnDate)
+                .expirationDate(earnDate.plusDays(10))
+                .pointStatus(PointStatus.AVAILABLE)
+                .receivedPoints(currPoints)
+                .availablePoints(currPoints)
+                .transactionStatus(TransactionStatus.RECEIVED)
+                .card(card)
+                .build());
     }
 
     private List<LoyalProgram> getLoyalProgramsSorted(Sale sale) {
@@ -191,11 +182,11 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private void generateRedeemPointsCardHistory(Card card, BigDecimal usedPoints) {
-        CardHistory newCardHistory = new CardHistory();
-        newCardHistory.setCard(card);
-        newCardHistory.setReceivedPoints(usedPoints);
-        newCardHistory.setEarnDate(LocalDateTime.now());
-        newCardHistory.setTransactionStatus(TransactionStatus.USED);
-        cardHistoryRepository.save(newCardHistory);
+        cardHistoryRepository.save(CardHistory.builder()
+                .card(card)
+                .receivedPoints(usedPoints)
+                .earnDate(LocalDateTime.now())
+                .transactionStatus(TransactionStatus.USED)
+                .build());
     }
 }

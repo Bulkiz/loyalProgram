@@ -3,10 +3,7 @@ package com.example.loyalProgram.saleModule.entities;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.baseEntity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -15,6 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SaleBonus extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "sale_id")
@@ -24,5 +22,5 @@ public class SaleBonus extends BaseEntity {
     private LoyalProgram loyalProgram;
     @Column(columnDefinition = "int2")
     private BigDecimal currentPrice;
-    private BigDecimal savedMoved;
+    private BigDecimal savedMoney;
 }

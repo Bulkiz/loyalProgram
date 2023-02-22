@@ -1,4 +1,4 @@
-package com.example.loyalProgram.services;
+package com.example.loyalProgram.saleModule.services;
 
 import com.example.loyalProgram.saleModule.entities.Sale;
 

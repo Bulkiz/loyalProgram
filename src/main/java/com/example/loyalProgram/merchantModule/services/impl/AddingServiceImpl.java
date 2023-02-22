@@ -1,18 +1,16 @@
-package com.example.loyalProgram.services.impl;
+package com.example.loyalProgram.merchantModule.services.impl;
 
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
-import com.example.loyalProgram.services.AddingService;
+import com.example.loyalProgram.merchantModule.services.AddingService;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +25,6 @@ public class AddingServiceImpl implements AddingService {
     @Autowired private LoyalProgramRepository loyalProgramRepository;
     @Autowired private ClientRepository clientRepository;
     @Autowired private CardRepository cardRepository;
-    @Autowired private ModelMapper modelMapper;
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
@@ -36,15 +33,9 @@ public class AddingServiceImpl implements AddingService {
 
     @Override
     public List<Tier> addTiers(Integer id, List<Tier> tier) {
-        return tier.parallelStream().peek(currentTier -> {
+        return tier.parallelStream().map(currentTier -> {
             currentTier.setMerchant(merchantRepository.findById(id).orElseThrow());
-            tierRepository.save(currentTier);
-            List<LoyalProgram> loyalPrograms = currentTier.getLoyalPrograms().parallelStream().map(loyalProgramDTO -> {
-                LoyalProgram loyalProgram = modelMapper.map(loyalProgramDTO, LoyalProgram.class);
-                loyalProgram.setTier(currentTier);
-                return loyalProgramRepository.save(loyalProgram);
-            }).toList();
-            currentTier.setLoyalPrograms(loyalPrograms);
+           return tierRepository.save(currentTier);
         }).toList();
     }
 
