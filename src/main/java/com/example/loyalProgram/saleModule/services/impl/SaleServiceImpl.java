@@ -44,7 +44,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @Transactional
-    public void makeSale(Sale currSale) {
+    public BigDecimal makeSale(Sale currSale) {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
         BigDecimal birthdayDiscountPercentage = BigDecimal.ZERO;
@@ -68,6 +68,7 @@ public class SaleServiceImpl implements SaleService {
                 default -> throw new IllegalArgumentException();
             }
         }
+        return sale.getDiscountedPrice();
     }
 
     private boolean checkBirthday(Sale currSale) {
@@ -152,13 +153,10 @@ public class SaleServiceImpl implements SaleService {
         BigDecimal cardBalance = card.getBalance();
 
         if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0) {
-
             card.setBalance(cardBalance.subtract(usedPoints));
             sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
             generateRedeemPointsCardHistory(card, usedPoints);
-
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
-
             for (CardHistory cardHistory : cardHistoryList) {
                 if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0) {
                     cardHistory.setPointStatus(PointStatus.UNAVAILABLE);

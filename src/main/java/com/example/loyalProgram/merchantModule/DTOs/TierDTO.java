@@ -7,9 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class TierDTO {
     private Integer id;
     private String name;

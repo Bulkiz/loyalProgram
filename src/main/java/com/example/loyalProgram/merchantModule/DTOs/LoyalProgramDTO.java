@@ -7,9 +7,6 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class LoyalProgramDTO {
     private Integer id;
     private String name;

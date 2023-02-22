@@ -16,8 +16,8 @@ public class SaleController {
     @Autowired private SaleMapper saleMapper;
 
     @PostMapping
-    public void makeSell(@RequestBody SaleDTO saleDTO){
-        saleService.makeSale(saleMapper.saleMapper(saleDTO));
+        public String makeSell(@RequestBody SaleDTO saleDTO){
+        return "You have successfully saved "  + saleService.makeSale(saleMapper.saleMapper(saleDTO)) + " !";
     }
 
 }

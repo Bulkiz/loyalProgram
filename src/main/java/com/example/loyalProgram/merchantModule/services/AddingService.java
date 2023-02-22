@@ -6,7 +6,6 @@ import com.example.loyalProgram.merchantModule.entities.Tier;
 
 import java.util.List;
 
-
 public interface AddingService {
     Merchant addMerchant(Merchant merchant);
 

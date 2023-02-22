@@ -20,6 +20,7 @@ public class AddingController {
 
     @Autowired AddingService addingService;
     @Autowired ModelMapper modelMapper;
+
     @PostMapping("/add")
     public MerchantDTO addMerchant(@RequestBody MerchantDTO merchantDTO){
         return modelMapper.map(addingService.addMerchant(modelMapper.map(merchantDTO, Merchant.class)), MerchantDTO.class);
@@ -30,7 +31,8 @@ public class AddingController {
         return addingService.addTiers(merchantId, tierDTOS.parallelStream().
                 map(tierDTO -> {
                    List<LoyalProgram> loyalPrograms = tierDTO.getLoyalPrograms().parallelStream()
-                            .map(loyalProgramDTO -> modelMapper.map(loyalProgramDTO, LoyalProgram.class)).toList();
+                            .map(loyalProgramDTO ->
+                                modelMapper.map(loyalProgramDTO, LoyalProgram.class)).toList();
                     Tier tier = modelMapper.map(tierDTO, Tier.class);
                     tier.setLoyalPrograms(loyalPrograms);
                     return tier;

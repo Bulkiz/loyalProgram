@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Transactional
 public class AddingServiceImpl implements AddingService {
 
     @Autowired private MerchantRepository merchantRepository;
@@ -33,9 +32,11 @@ public class AddingServiceImpl implements AddingService {
 
     @Override
     public List<Tier> addTiers(Integer id, List<Tier> tier) {
-        return tier.parallelStream().map(currentTier -> {
+        return tier.parallelStream().peek(currentTier -> {
             currentTier.setMerchant(merchantRepository.findById(id).orElseThrow());
-           return tierRepository.save(currentTier);
+            tierRepository.save(currentTier);
+            currentTier.getLoyalPrograms().forEach(loyalProgram -> loyalProgram.setTier(currentTier));
+            loyalProgramRepository.saveAll(currentTier.getLoyalPrograms());
         }).toList();
     }
 
