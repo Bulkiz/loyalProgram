@@ -55,16 +55,18 @@ public class SaleServiceImpl implements SaleService {
         for (LoyalProgram loyalProgram : loyalPrograms) {
 
             switch (loyalProgram.getType()) {
-                case DISCOUNT -> {
-                    sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
-                    saleRepository.save(sale);
-                    saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
-                }
+
                 case BIRTHDAY -> {
                     if (checkBirthday(currSale)) {
                         birthdayDiscountPercentage = birthdayDiscountPercentage.add(loyalProgram.getDiscountPercentage());
                     }
                 }
+
+                case DISCOUNT -> {
+                    sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
+                    saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
+                }
+
                 case USE_POINTS -> {
                     Card card = getCurrClient(currSale).getCard();
                     updateStatusAndBalanceByDate(card);
@@ -73,7 +75,6 @@ public class SaleServiceImpl implements SaleService {
                 case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, loyalProgram.getDiscountPercentage());
 
                 default -> throw new IllegalArgumentException();
-
             }
         }
     }
@@ -100,6 +101,7 @@ public class SaleServiceImpl implements SaleService {
         BigDecimal discountedPrice = calculatePercentage(sale.getOriginalPrice(), discountPercentage);
         sale.setDiscountedPrice(discountedPrice);
         sale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
+        saleRepository.save(sale);
         return sale;
     }
 
