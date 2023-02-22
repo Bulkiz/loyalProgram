@@ -58,14 +58,14 @@ public class SaleServiceImpl implements SaleService {
                     saleRepository.save(sale);
                     saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
                 }
-                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
-
                 case USE_POINTS -> {
                     Card card = getCurrClient(currSale).getCard();
                     updateStatusAndBalanceByDate(card);
-                    redeemPoints(card, currSale.getUsedPoints());
+                    redeemPoints(card, currSale.getUsedPoints(), sale);
                 }
-                default -> throw new IllegalArgumentException();
+                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, discountPercentage);
+
+                default -> System.out.println("!!"); //throw new IllegalArgumentException();
 
             }
         }
@@ -131,7 +131,7 @@ public class SaleServiceImpl implements SaleService {
         LocalDateTime currentDate = LocalDateTime.now();
         List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
         cardHistoryList.forEach(cardHistory -> {
-            if (cardHistory.getPointStatus() == PointStatus.AVAILABLE && currentDate.isAfter(cardHistory.getExpirationDate())) {
+            if (currentDate.isAfter(cardHistory.getExpirationDate()) && cardHistory.getPointStatus() == PointStatus.AVAILABLE) {
                 cardHistory.setPointStatus(PointStatus.EXPIRED);
                 cardHistory.setExpiredPoints(cardHistory.getAvailablePoints());
                 cardHistory.setAvailablePoints(BigDecimal.ZERO);
@@ -142,37 +142,40 @@ public class SaleServiceImpl implements SaleService {
         });
     }
 
-    private void redeemPoints(Card card, BigDecimal usedPoints){
+    private void redeemPoints(Card card, BigDecimal usedPoints, Sale sale) {
         BigDecimal cardBalance = card.getBalance();
-        if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0){
+
+        if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0) {
+
             card.setBalance(cardBalance.subtract(usedPoints));
+            sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
             generateRedeemPointsCardHistory(card, usedPoints);
+
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
-            for (CardHistory cardHistory: cardHistoryList){
-                if(usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0){
+
+            for (CardHistory cardHistory : cardHistoryList) {
+                if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0) {
                     cardHistory.setPointStatus(PointStatus.UNAVAILABLE);
+                    setCurrentCardHistory(cardHistory, cardHistory.getReceivedPoints(), BigDecimal.ZERO);
                     usedPoints = usedPoints.subtract(cardHistory.getAvailablePoints());
-                    cardHistory.setAvailablePoints(BigDecimal.ZERO);
-                    cardHistory.setUsedPoints(cardHistory.getReceivedPoints());
-                    cardHistoryRepository.save(cardHistory);
-                }else if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) < 0){
-                    cardHistory.setUsedPoints(cardHistory.getUsedPoints().add(usedPoints));
-                    cardHistory.setAvailablePoints(cardHistory.getAvailablePoints().subtract(usedPoints));
-                    cardHistoryRepository.save(cardHistory);
+                } else if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) < 0) {
+                    setCurrentCardHistory(cardHistory, cardHistory.getUsedPoints().add(usedPoints), cardHistory.getAvailablePoints().subtract(usedPoints));
                     break;
-                }else {
-                    cardHistory.setAvailablePoints(BigDecimal.ZERO);
-                    cardHistory.setUsedPoints(cardHistory.getReceivedPoints());
-                    cardHistoryRepository.save(cardHistory);
+                } else {
+                    setCurrentCardHistory(cardHistory, cardHistory.getReceivedPoints(), BigDecimal.ZERO);
                     break;
                 }
             }
-
         }
-
     }
 
-    private void generateRedeemPointsCardHistory(Card card, BigDecimal usedPoints){
+    private void setCurrentCardHistory(CardHistory cardHistory, BigDecimal usedPoints, BigDecimal availablePoints) {
+        cardHistory.setUsedPoints(usedPoints);
+        cardHistory.setAvailablePoints(availablePoints);
+        cardHistoryRepository.save(cardHistory);
+    }
+
+    private void generateRedeemPointsCardHistory(Card card, BigDecimal usedPoints) {
         CardHistory newCardHistory = new CardHistory();
         newCardHistory.setCard(card);
         newCardHistory.setReceivedPoints(usedPoints);

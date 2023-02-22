@@ -58,7 +58,7 @@ public class AddingServiceImpl implements AddingService {
     @Override
     public List<Client> addClients(List<Client> clients) {
         return clients.parallelStream().map(currentClient -> {
-        generateAndSetCard(currentClient);
+            generateAndSetCard(currentClient);
             return clientRepository.save(currentClient);
         }).toList();
     }
