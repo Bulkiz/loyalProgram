@@ -52,7 +52,7 @@ public class TestMakeSell {
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
         testListLoyalProgram.add(testLoyalProgram);
 
-        testTier = testTier.builder()
+        testTier = Tier.builder()
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
@@ -88,6 +88,6 @@ public class TestMakeSell {
     public void testMakeSell() {
         //  when(saleService.makeSale(testSale)).thenReturn(BigDecimal.valueOf(100));
         Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
+        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow(), testSale);
     }
 }

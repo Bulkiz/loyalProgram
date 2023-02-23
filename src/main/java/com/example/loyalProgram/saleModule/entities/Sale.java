@@ -1,13 +1,15 @@
 package com.example.loyalProgram.saleModule.entities;
 
+import com.example.loyalProgram.baseEntity.BaseEntity;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
-import com.example.loyalProgram.baseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -34,4 +36,16 @@ public class Sale extends BaseEntity {
     @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal usedPoints;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Sale sale = (Sale) o;
+        return getId() != null && Objects.equals(getId(), sale.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
