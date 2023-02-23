@@ -52,7 +52,7 @@ public class TestMakeSell {
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
         testListLoyalProgram.add(testLoyalProgram);
 
-        testTier = testTier.builder()
+        testTier = Tier.builder()
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
