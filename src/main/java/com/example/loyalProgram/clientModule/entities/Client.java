@@ -5,10 +5,7 @@ import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.baseEntity.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,11 +14,11 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client extends BaseEntity {
     private String name;
-
     private LocalDate birthday;
     @OneToMany(mappedBy = "client")
     private List<Sale> sales;

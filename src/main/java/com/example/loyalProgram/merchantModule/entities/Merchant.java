@@ -5,16 +5,14 @@ import com.example.loyalProgram.baseEntity.BaseEntity;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Merchant extends BaseEntity {
