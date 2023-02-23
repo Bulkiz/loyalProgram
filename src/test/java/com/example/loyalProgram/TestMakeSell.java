@@ -7,12 +7,14 @@ import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.mock;
 
 
 @SpringBootTest
+@TestPropertySource(locations="classpath:application.yml")
 public class TestMakeSell {
     @Autowired SaleService saleService;
     @Autowired AddingServiceImpl addingService;
@@ -31,6 +34,8 @@ public class TestMakeSell {
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
     Tier testTier = mock(Tier.class);
+    @Autowired
+    private SaleRepository saleRepository;
 
     @BeforeEach
     public void setUp() {
@@ -83,5 +88,6 @@ public class TestMakeSell {
     public void testMakeSell() {
         //  when(saleService.makeSale(testSale)).thenReturn(BigDecimal.valueOf(100));
         Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2));
+        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }
