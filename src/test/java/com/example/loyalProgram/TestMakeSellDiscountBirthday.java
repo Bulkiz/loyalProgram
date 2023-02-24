@@ -80,6 +80,7 @@ public class TestMakeSellDiscountBirthday {
                 .merchant(testMerchant)
                 .tier(testTier)
                 .birthday(LocalDate.now())
+                .amountSpend(BigDecimal.ZERO)
                 .build();
 
         List<Client> testListClients = new LinkedList<>();

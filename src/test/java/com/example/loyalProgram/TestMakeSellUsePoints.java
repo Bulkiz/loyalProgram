@@ -83,7 +83,7 @@ public class TestMakeSellUsePoints {
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.TEN)
+                .tierAmount(BigDecimal.valueOf(500))
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
@@ -96,6 +96,7 @@ public class TestMakeSellUsePoints {
                 .merchant(testMerchant)
                 .tier(testTier)
                 .birthday(LocalDate.now())
+                .amountSpend(BigDecimal.ZERO)
                 .build();
 
         List<Client> testListClients = new LinkedList<>();
