@@ -1,13 +1,14 @@
 package com.example.loyalProgram;
 
+import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSellDiscountBirthday {
+public class TestMakeSaleAddPoints {
     @Autowired
     SaleService saleService;
     @Autowired
@@ -35,39 +36,41 @@ public class TestMakeSellDiscountBirthday {
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramBirthday = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
     Tier testTier = mock(Tier.class);
+
     @Autowired
-    private SaleRepository saleRepository;
+    CardRepository cardRepository;
 
     @BeforeEach
     public void setUp() {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgram  = LoyalProgram.builder()
+        testLoyalProgramDiscount = LoyalProgram.builder()
                 .name("TestLoyalProgram")
                 .priority(10)
                 .discountPercentage(BigDecimal.TEN)
                 .type(LoyalProgramType.DISCOUNT)
                 .build();
 
-        testLoyalProgramBirthday = LoyalProgram.builder()
-                .name("TestLoyalProgramBirthDay")
-                .priority(5)
+
+        testLoyalProgram = LoyalProgram.builder()
+                .name("TestLoyalProgram")
+                .priority(30)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.BIRTHDAY)
+                .type(LoyalProgramType.ADD_POINTS)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
+        testListLoyalProgram.add(testLoyalProgramDiscount);
         testListLoyalProgram.add(testLoyalProgram);
-        testListLoyalProgram.add(testLoyalProgramBirthday);
 
         testTier = Tier.builder()
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.TEN)
+                .tierAmount(BigDecimal.valueOf(100))
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
@@ -92,13 +95,17 @@ public class TestMakeSellDiscountBirthday {
                 .client(testClient)
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
-                .usedPoints(BigDecimal.ZERO)
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(20).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow(), testSale);
+        Card testCard= testClient.getCard();
+        BigDecimal testCardBalance = testCard.getBalance();
+        saleService.makeSale(testSale);
+        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));
+
     }
 }
+
+

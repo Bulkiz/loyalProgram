@@ -2,6 +2,7 @@ package com.example.loyalProgram;
 
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
@@ -9,6 +10,7 @@ import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.services.SaleService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,15 @@ public class TestMakeSaleUpgradeClientTier {
     SaleService saleService;
     @Autowired
     AddingServiceImpl addingService;
+
+    @Autowired
+    ClientRepository clientRepository;
     Merchant testMerchant = mock(Merchant.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
     LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
-    Tier testTier = mock(Tier.class);
+    Tier firstTestTier = mock(Tier.class);
     Tier secondTier = mock(Tier.class);
 
     @Autowired
@@ -55,30 +60,31 @@ public class TestMakeSaleUpgradeClientTier {
                 .name("TestLoyalProgram")
                 .priority(30)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.ADD_POINTS)
+                .type(LoyalProgramType.DISCOUNT)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
         testListLoyalProgram.add(testLoyalProgramDiscount);
-        testListLoyalProgram.add(testLoyalProgram);
+        List<LoyalProgram> testListLoyalProgram1 = new LinkedList<>();
+        testListLoyalProgram1.add(testLoyalProgram);
 
-        testTier = Tier.builder()
-                .name("TestTier")
+        firstTestTier = Tier.builder()
+                .name("FirstTestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
                 .tierAmount(BigDecimal.valueOf(100))
                 .build();
 
         secondTier = Tier.builder()
-                .name("TestTier")
+                .name("SecondTestTier")
                 .merchant(testMerchant)
-                .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.valueOf(200))
+                .loyalPrograms(testListLoyalProgram1)
+                .tierAmount(BigDecimal.valueOf(150))
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
 
-        testListTier.add(testTier);
+        testListTier.add(firstTestTier);
         testListTier.add(secondTier);
 
         addingService.addTiers(testMerchant.getId(), testListTier);
@@ -86,7 +92,7 @@ public class TestMakeSaleUpgradeClientTier {
         testClient = Client.builder()
                 .name("TestClient")
                 .merchant(testMerchant)
-                .tier(testTier)
+                .tier(firstTestTier)
                 .birthday(LocalDate.now())
                 .amountSpend(BigDecimal.ZERO)
                 .build();
@@ -100,12 +106,17 @@ public class TestMakeSaleUpgradeClientTier {
                 .client(testClient)
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
-                .summaryPrice(BigDecimal.valueOf(100))
                 .build();
     }
 
     @Test
     public void testMakeSale() {
+        saleService.makeSale(testSale);
+        String startTier = clientRepository.findById(testClient.getId()).orElseThrow().getTier().getName();
+        saleService.makeSale(testSale);
+        String finalTier = clientRepository.findById(testClient.getId()).orElseThrow().getTier().getName();
+       Assertions.assertEquals("FirstTestTier",startTier);
+       Assertions.assertEquals("SecondTestTier",finalTier);
 
     }
 

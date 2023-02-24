@@ -1,11 +1,7 @@
 package com.example.loyalProgram;
 
-import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
-import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
-import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
-import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
@@ -30,7 +26,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSellUsePoints {
+public class TestMakeSaleDiscountBirthday {
     @Autowired
     SaleService saleService;
     @Autowired
@@ -39,51 +35,39 @@ public class TestMakeSellUsePoints {
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramUsePoints = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgramBirthday = mock(LoyalProgram.class);
     Tier testTier = mock(Tier.class);
     @Autowired
     private SaleRepository saleRepository;
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
-    private CardHistoryRepository cardHistoryRepository;
 
     @BeforeEach
     public void setUp() {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgramDiscount = LoyalProgram.builder()
+        testLoyalProgram  = LoyalProgram.builder()
                 .name("TestLoyalProgram")
                 .priority(10)
                 .discountPercentage(BigDecimal.TEN)
                 .type(LoyalProgramType.DISCOUNT)
                 .build();
 
-        testLoyalProgramUsePoints = LoyalProgram.builder()
-                .name("TestLoyalProgram")
-                .priority(20)
-                .type(LoyalProgramType.USE_POINTS)
-                .build();
-
-        testLoyalProgram = LoyalProgram.builder()
-                .name("TestLoyalProgram")
-                .priority(30)
+        testLoyalProgramBirthday = LoyalProgram.builder()
+                .name("TestLoyalProgramBirthDay")
+                .priority(5)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.ADD_POINTS)
+                .type(LoyalProgramType.BIRTHDAY)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
-        testListLoyalProgram.add(testLoyalProgramDiscount);
         testListLoyalProgram.add(testLoyalProgram);
-        testListLoyalProgram.add(testLoyalProgramUsePoints);
+        testListLoyalProgram.add(testLoyalProgramBirthday);
 
         testTier = Tier.builder()
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.valueOf(500))
+                .tierAmount(BigDecimal.TEN)
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
@@ -108,30 +92,13 @@ public class TestMakeSellUsePoints {
                 .client(testClient)
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
-                .summaryPrice(BigDecimal.valueOf(100))
                 .usedPoints(BigDecimal.ZERO)
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        saleService.makeSale(testSale);
-        testSale.setUsedPoints(BigDecimal.valueOf(5));
-        BigDecimal result = saleService.makeSale(testSale);
-        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
-    }
-
-    @Test
-    public void testMakeSaleExpirePoints() throws InterruptedException {
-        Sale secondSale = testSale;
-        saleService.makeSale(testSale);
-        Card card = clientRepository.findById(testSale.getClient().getId()).orElseThrow().getCard();
-        Thread.sleep(11000);
-        saleService.makeSale(secondSale);
-        Assertions.assertEquals(cardHistoryRepository.findFirstByCard(card).getPointStatus(), PointStatus.EXPIRED);
+        Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(20).setScale(2));
+        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow(), testSale);
     }
 }
-
-
-
