@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSellAddPoints {
+public class TestMakeSellAddPointsUsePoints {
     @Autowired
     SaleService saleService;
     @Autowired
