@@ -38,6 +38,7 @@ public class TestMakeSellAddPoints {
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
     LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgramUsePoints = mock(LoyalProgram.class);
     Tier testTier = mock(Tier.class);
     @Autowired
     private SaleRepository saleRepository;
@@ -57,6 +58,12 @@ public class TestMakeSellAddPoints {
                 .type(LoyalProgramType.DISCOUNT)
                 .build();
 
+        testLoyalProgramUsePoints = LoyalProgram.builder()
+                .name("TestLoyalProgram")
+                .priority(20)
+                .type(LoyalProgramType.USE_POINTS)
+                .build();
+
         testLoyalProgram = LoyalProgram.builder()
                 .name("TestLoyalProgram")
                 .priority(30)
@@ -67,6 +74,7 @@ public class TestMakeSellAddPoints {
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
         testListLoyalProgram.add(testLoyalProgramDiscount);
         testListLoyalProgram.add(testLoyalProgram);
+        testListLoyalProgram.add(testLoyalProgramUsePoints);
 
         testTier = Tier.builder()
                 .name("TestTier")
@@ -106,7 +114,10 @@ public class TestMakeSellAddPoints {
         Card testCard= testClient.getCard();
         BigDecimal testCardBalance = testCard.getBalance();
         saleService.makeSale(testSale);
-        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));
+        testSale.setUsedPoints(BigDecimal.valueOf(5));
+        BigDecimal result = saleService.makeSale(testSale);
+        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(18)).setScale(2));
+        Assertions.assertEquals(result, BigDecimal.valueOf(10).setScale(2));
         Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }

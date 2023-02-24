@@ -155,6 +155,7 @@ public class SaleServiceImpl implements SaleService {
         if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0) {
             card.setBalance(cardBalance.subtract(usedPoints));
             sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
+            sale.setDiscountedPrice(sale.getDiscountedPrice().add(usedPoints));
             generateRedeemPointsCardHistory(card, usedPoints);
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
             for (CardHistory cardHistory : cardHistoryList) {
