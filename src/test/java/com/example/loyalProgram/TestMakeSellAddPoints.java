@@ -114,10 +114,12 @@ public class TestMakeSellAddPoints {
         Card testCard= testClient.getCard();
         BigDecimal testCardBalance = testCard.getBalance();
         saleService.makeSale(testSale);
+
+        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));
+
         testSale.setUsedPoints(BigDecimal.valueOf(5));
         BigDecimal result = saleService.makeSale(testSale);
-        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(18)).setScale(2));
-        Assertions.assertEquals(result, BigDecimal.valueOf(10).setScale(2));
+        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
         Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }

@@ -112,6 +112,7 @@ public class SaleServiceImpl implements SaleService {
                 .expirationDate(earnDate.plusDays(10))
                 .pointStatus(PointStatus.AVAILABLE)
                 .receivedPoints(currPoints)
+                .usedPoints(BigDecimal.ZERO)
                 .availablePoints(currPoints)
                 .transactionStatus(TransactionStatus.RECEIVED)
                 .card(card)
