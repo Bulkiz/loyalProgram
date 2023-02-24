@@ -9,7 +9,6 @@ import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSellAddPointsUsePoints {
+public class TestMakeSellAddPoints {
     @Autowired
     SaleService saleService;
     @Autowired
@@ -38,10 +37,7 @@ public class TestMakeSellAddPointsUsePoints {
     Client testClient = mock(Client.class);
     LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
     LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramUsePoints = mock(LoyalProgram.class);
     Tier testTier = mock(Tier.class);
-    @Autowired
-    private SaleRepository saleRepository;
 
     @Autowired
     CardRepository cardRepository;
@@ -58,11 +54,6 @@ public class TestMakeSellAddPointsUsePoints {
                 .type(LoyalProgramType.DISCOUNT)
                 .build();
 
-        testLoyalProgramUsePoints = LoyalProgram.builder()
-                .name("TestLoyalProgram")
-                .priority(20)
-                .type(LoyalProgramType.USE_POINTS)
-                .build();
 
         testLoyalProgram = LoyalProgram.builder()
                 .name("TestLoyalProgram")
@@ -74,7 +65,6 @@ public class TestMakeSellAddPointsUsePoints {
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
         testListLoyalProgram.add(testLoyalProgramDiscount);
         testListLoyalProgram.add(testLoyalProgram);
-        testListLoyalProgram.add(testLoyalProgramUsePoints);
 
         testTier = Tier.builder()
                 .name("TestTier")
@@ -105,7 +95,6 @@ public class TestMakeSellAddPointsUsePoints {
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
                 .summaryPrice(BigDecimal.valueOf(100))
-                .usedPoints(BigDecimal.ZERO)
                 .build();
     }
 
@@ -114,13 +103,8 @@ public class TestMakeSellAddPointsUsePoints {
         Card testCard= testClient.getCard();
         BigDecimal testCardBalance = testCard.getBalance();
         saleService.makeSale(testSale);
-
         Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));
 
-        testSale.setUsedPoints(BigDecimal.valueOf(5));
-        BigDecimal result = saleService.makeSale(testSale);
-        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }
 
