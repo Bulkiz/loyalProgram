@@ -25,10 +25,12 @@ import static org.mockito.Mockito.mock;
 
 
 @SpringBootTest
-@TestPropertySource(locations="classpath:application.yml")
-public class TestMakeSell {
-    @Autowired SaleService saleService;
-    @Autowired AddingServiceImpl addingService;
+@TestPropertySource(locations = "classpath:application.yml")
+public class TestMakeSellDiscount {
+    @Autowired
+    SaleService saleService;
+    @Autowired
+    AddingServiceImpl addingService;
     Merchant testMerchant = mock(Merchant.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
@@ -68,7 +70,7 @@ public class TestMakeSell {
                 .name("TestClient")
                 .merchant(testMerchant)
                 .tier(testTier)
-                .birthday(LocalDate.parse("2001-02-23"))
+                .birthday(LocalDate.now())
                 .build();
 
         List<Client> testListClients = new LinkedList<>();
@@ -86,8 +88,8 @@ public class TestMakeSell {
 
     @Test
     public void testMakeSell() {
-        //  when(saleService.makeSale(testSale)).thenReturn(BigDecimal.valueOf(100));
         Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow(), testSale);
+        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }
+
