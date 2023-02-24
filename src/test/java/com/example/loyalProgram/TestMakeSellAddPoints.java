@@ -3,6 +3,7 @@ package com.example.loyalProgram;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
@@ -70,7 +71,7 @@ public class TestMakeSellAddPoints {
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.TEN)
+                .tierAmount(BigDecimal.valueOf(100))
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();

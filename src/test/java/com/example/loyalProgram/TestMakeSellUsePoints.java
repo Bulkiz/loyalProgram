@@ -1,7 +1,11 @@
 package com.example.loyalProgram;
 
+import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
+import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
+import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
@@ -40,6 +44,11 @@ public class TestMakeSellUsePoints {
     Tier testTier = mock(Tier.class);
     @Autowired
     private SaleRepository saleRepository;
+    @Autowired
+    private ClientRepository clientRepository;
+    @Autowired
+    private CardHistoryRepository cardHistoryRepository;
+
     @BeforeEach
     public void setUp() {
         testMerchant = Merchant.builder().name("TestMerchant").build();
@@ -110,6 +119,16 @@ public class TestMakeSellUsePoints {
         BigDecimal result = saleService.makeSale(testSale);
         Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
         Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
+    }
+
+    @Test
+    public void testMakeSaleExpirePoints() throws InterruptedException {
+        Sale secondSale = testSale;
+        saleService.makeSale(testSale);
+        Card card = clientRepository.findById(testSale.getClient().getId()).orElseThrow().getCard();
+        Thread.sleep(11000);
+        saleService.makeSale(secondSale);
+        Assertions.assertEquals(cardHistoryRepository.findFirstByCard(card).getPointStatus(), PointStatus.EXPIRED);
     }
 }
 

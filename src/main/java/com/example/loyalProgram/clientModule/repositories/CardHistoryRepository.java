@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface CardHistoryRepository extends JpaRepository<CardHistory, Integer> {
     List<CardHistory> findAllByCardAndPointStatusOrderById(Card card, PointStatus pointStatus);
+
+    CardHistory findFirstByCard(Card card);
 }

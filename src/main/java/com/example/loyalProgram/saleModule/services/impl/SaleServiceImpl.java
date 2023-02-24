@@ -68,7 +68,18 @@ public class SaleServiceImpl implements SaleService {
                 default -> throw new IllegalArgumentException();
             }
         }
+        updateAmountAndCheckTier(currSale.getClient(), currSale.getSummaryPrice());
         return sale.getDiscountedPrice();
+    }
+
+    private void updateAmountAndCheckTier(Client client, BigDecimal summaryPrice) {
+        client.setAmountSpend(client.getAmountSpend().add(summaryPrice));
+        if (client.getTier().getTierAmount().compareTo(client.getAmountSpend()) >= 0){
+            client.setTier(tierRepository.
+                    findFirstByMerchantAndTierAmountGreaterThanOrderByTierAmount(client.getMerchant(),
+                            client.getTier().getTierAmount()));
+        }
+        clientRepository.save(client);
     }
 
     private boolean checkBirthday(Sale currSale) {
@@ -109,7 +120,7 @@ public class SaleServiceImpl implements SaleService {
         LocalDateTime earnDate = LocalDateTime.now();
         cardHistoryRepository.save(CardHistory.builder().
                 earnDate(earnDate)
-                .expirationDate(earnDate.plusDays(10))
+                .expirationDate(earnDate.plusSeconds(9))
                 .pointStatus(PointStatus.AVAILABLE)
                 .receivedPoints(currPoints)
                 .usedPoints(BigDecimal.ZERO)
