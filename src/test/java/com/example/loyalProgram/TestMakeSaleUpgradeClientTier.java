@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,6 +94,7 @@ public class TestMakeSaleUpgradeClientTier {
                 .name("TestClient")
                 .merchant(testMerchant)
                 .tier(firstTestTier)
+                .cards(new ArrayList<>())
                 .birthday(LocalDate.now())
                 .amountSpend(BigDecimal.ZERO)
                 .build();
@@ -105,6 +107,7 @@ public class TestMakeSaleUpgradeClientTier {
         testSale = Sale.builder()
                 .client(testClient)
                 .merchant(testMerchant)
+                .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
                 .originalPrice(BigDecimal.valueOf(100))
                 .build();
     }

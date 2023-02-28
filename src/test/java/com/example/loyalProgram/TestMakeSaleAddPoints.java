@@ -3,6 +3,7 @@ package com.example.loyalProgram;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
+import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +43,8 @@ public class TestMakeSaleAddPoints {
 
     @Autowired
     CardRepository cardRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
     @BeforeEach
     public void setUp() {
@@ -82,6 +86,7 @@ public class TestMakeSaleAddPoints {
                 .name("TestClient")
                 .merchant(testMerchant)
                 .tier(testTier)
+                .cards(new ArrayList<>())
                 .birthday(LocalDate.now())
                 .amountSpend(BigDecimal.ZERO)
                 .build();
@@ -94,13 +99,14 @@ public class TestMakeSaleAddPoints {
         testSale = Sale.builder()
                 .client(testClient)
                 .merchant(testMerchant)
+                .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
                 .originalPrice(BigDecimal.valueOf(100))
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        Card testCard= testClient.getCard();
+        Card testCard= testClient.getCards().get(0);
         BigDecimal testCardBalance = testCard.getBalance();
         saleService.makeSale(testSale);
         Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));

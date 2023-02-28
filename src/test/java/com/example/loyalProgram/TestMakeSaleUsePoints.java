@@ -3,6 +3,7 @@ package com.example.loyalProgram;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
+import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.enums.PointStatus;
@@ -22,6 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class TestMakeSaleUsePoints {
     private ClientRepository clientRepository;
     @Autowired
     private CardHistoryRepository cardHistoryRepository;
+    @Autowired
+    private CardRepository cardRepository;
 
     @BeforeEach
     public void setUp() {
@@ -95,6 +99,7 @@ public class TestMakeSaleUsePoints {
                 .name("TestClient")
                 .merchant(testMerchant)
                 .tier(testTier)
+                .cards(new ArrayList<>())
                 .birthday(LocalDate.now())
                 .amountSpend(BigDecimal.ZERO)
                 .build();
@@ -108,6 +113,7 @@ public class TestMakeSaleUsePoints {
                 .client(testClient)
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
+                .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
                 .usedPoints(BigDecimal.ZERO)
                 .build();
     }
@@ -125,7 +131,7 @@ public class TestMakeSaleUsePoints {
     public void testMakeSaleExpirePoints() throws InterruptedException {
         Sale secondSale = testSale;
         saleService.makeSale(testSale);
-        Card card = clientRepository.findById(testSale.getClient().getId()).orElseThrow().getCard();
+        Card card = testSale.getCard();
         Thread.sleep(11000);
         saleService.makeSale(secondSale);
         Assertions.assertEquals(cardHistoryRepository.findFirstByCard(card).getPointStatus(), PointStatus.EXPIRED);

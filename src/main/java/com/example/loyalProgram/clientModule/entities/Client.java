@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,9 +23,8 @@ public class Client extends BaseEntity {
     private LocalDate birthday;
     @OneToMany(mappedBy = "client")
     private List<Sale> sales;
-    @OneToOne
-    @JoinColumn(name = "card_id")
-    private Card card;
+    @OneToMany(mappedBy = "client")
+    private List<Card> cards = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;

@@ -1,14 +1,11 @@
 package com.example.loyalProgram.merchantModule.entities;
 
 import com.example.loyalProgram.baseEntity.BaseEntity;
-import com.example.loyalProgram.enums.LoyalProgramType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,14 +13,11 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, columnDefinition = "varchar")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class LoyalProgram extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "tier_id")
     private Tier tier;
-    private String name;
-    private Integer priority;
-    @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal discountPercentage;
-    @Column(columnDefinition = "int2")
-    private LoyalProgramType type;
+    private LocalDate expirationDate;
 }

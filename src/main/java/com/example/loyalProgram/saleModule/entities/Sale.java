@@ -1,6 +1,7 @@
 package com.example.loyalProgram.saleModule.entities;
 
 import com.example.loyalProgram.baseEntity.BaseEntity;
+import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import jakarta.persistence.*;
@@ -22,6 +23,9 @@ public class Sale extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
     @ManyToOne
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class SaleDTO {
     private Integer clientId;
     private Integer merchantId;
+    private Integer cardId;
     private BigDecimal price;
     private BigDecimal usedPoints;
 }

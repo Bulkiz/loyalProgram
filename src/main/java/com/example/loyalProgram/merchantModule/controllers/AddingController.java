@@ -52,5 +52,4 @@ public class AddingController {
                 map(clientDTO -> modelMapper.map(clientDTO, Client.class)).toList()).parallelStream().
                 map(client -> modelMapper.map(client, ClientDTO.class)).toList();
     }
-
 }

@@ -9,6 +9,8 @@ import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
+import com.example.loyalProgram.merchantModule.entities.DiscountLoyalProgram;
+import com.example.loyalProgram.merchantModule.entities.DiscountLoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.entities.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
@@ -41,6 +43,8 @@ public class SaleServiceImpl implements SaleService {
     @Autowired private TierRepository tierRepository;
     @Autowired private LoyalProgramRepository loyalProgramRepository;
     @Autowired private SaleBonusRepository saleBonusRepository;
+    @Autowired
+    private DiscountLoyalProgramRepository discountLoyalProgramRepository;
 
     @Override
     @Transactional
@@ -48,26 +52,27 @@ public class SaleServiceImpl implements SaleService {
         Sale sale = new Sale();
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
         BigDecimal birthdayDiscountPercentage = BigDecimal.ZERO;
-        for (LoyalProgram loyalProgram : loyalPrograms) {
-            switch (loyalProgram.getType()) {
-                case BIRTHDAY -> {
-                    if (checkBirthday(currSale)) {
-                        birthdayDiscountPercentage = birthdayDiscountPercentage.add(loyalProgram.getDiscountPercentage());
-                    }
-                }
-                case DISCOUNT -> {
-                    sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
-                    saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
-                }
-                case USE_POINTS -> {
-                    Card card = getCurrClient(currSale).getCard();
-                    updateStatusAndBalanceByDate(card);
-                    redeemPoints(card, currSale.getUsedPoints(), sale);
-                }
-                case ADD_POINTS -> cardTransaction(getCurrClient(currSale), sale, loyalProgram.getDiscountPercentage());
-                default -> throw new IllegalArgumentException();
-            }
-        }
+//        for (LoyalProgram loyalProgram : loyalPrograms) {
+//            switch (loyalProgram.getType()) {
+//                case BIRTHDAY -> {
+//                    if (checkBirthday(currSale)) {
+//                        birthdayDiscountPercentage = birthdayDiscountPercentage.add(loyalProgram.getDiscountPercentage());
+//                    }
+//                }
+//                case DISCOUNT -> {
+//                    sale = discountSaleMethod(currSale, loyalProgram.getDiscountPercentage().add(birthdayDiscountPercentage));
+//                    saleBonusRepository.save(generateSaleBonus(sale, loyalProgram));
+//                }
+//                case USE_POINTS -> {
+//                    Card card = cardRepository.findById(currSale.getCard().getId()).orElseThrow();
+//                    updateStatusAndBalanceByDate(card);
+//                    redeemPoints(card, currSale.getUsedPoints(), sale);
+//                }
+//                case ADD_POINTS -> cardTransaction(currSale , sale, loyalProgram.getDiscountPercentage());
+//                default -> throw new IllegalArgumentException();
+//            }
+//        }
+
         updateAmountAndCheckTier(currSale.getClient(), currSale.getSummaryPrice());
         return sale.getDiscountedPrice();
     }
@@ -108,8 +113,8 @@ public class SaleServiceImpl implements SaleService {
         return sale;
     }
 
-    private void cardTransaction(Client currClient, Sale sale, BigDecimal discountPercentage) {
-        Card card = cardRepository.findById(currClient.getCard().getId()).orElseThrow();
+    private void cardTransaction(Sale currSale, Sale sale, BigDecimal discountPercentage) {
+        Card card = cardRepository.findById(currSale.getCard().getId()).orElseThrow();
         BigDecimal currPoints = calculatePercentage(sale.getSummaryPrice(), discountPercentage);
         card.setBalance(card.getBalance().add(currPoints));
         cardRepository.save(card);
@@ -120,10 +125,11 @@ public class SaleServiceImpl implements SaleService {
         LocalDateTime earnDate = LocalDateTime.now();
         cardHistoryRepository.save(CardHistory.builder().
                 earnDate(earnDate)
-                .expirationDate(earnDate.plusSeconds(9))
+                .expirationDate(earnDate.plusSeconds(9000000))
                 .pointStatus(PointStatus.AVAILABLE)
                 .receivedPoints(currPoints)
                 .usedPoints(BigDecimal.ZERO)
+                .expiredPoints(BigDecimal.ZERO)
                 .availablePoints(currPoints)
                 .transactionStatus(TransactionStatus.RECEIVED)
                 .card(card)
@@ -134,7 +140,7 @@ public class SaleServiceImpl implements SaleService {
         Client currClient = getCurrClient(sale);
         Tier currTier = tierRepository.findById(currClient.getTier().getId()).orElseThrow();
         List<LoyalProgram> loyalPrograms = loyalProgramRepository.findAllByTier(currTier);
-        loyalPrograms.sort(Comparator.comparing(LoyalProgram::getPriority));
+        //loyalPrograms.sort(Comparator.comparing(LoyalProgram::getPriority));
         return loyalPrograms;
     }
 
