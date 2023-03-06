@@ -4,10 +4,10 @@ import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.merchantModule.entities.DiscountLoyalProgram;
-import com.example.loyalProgram.merchantModule.entities.DiscountLoyalProgramRepository;
-import com.example.loyalProgram.merchantModule.entities.Merchant;
-import com.example.loyalProgram.merchantModule.entities.Tier;
+import com.example.loyalProgram.merchantModule.entities.*;
+import com.example.loyalProgram.merchantModule.entities.loyals.AddPointsLoyalProgram;
+import com.example.loyalProgram.merchantModule.entities.loyals.BirthdayLoyalProgram;
+import com.example.loyalProgram.merchantModule.entities.loyals.DiscountLoyalProgram;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -26,12 +27,10 @@ public class AddingServiceImpl implements AddingService {
     @Autowired private LoyalProgramRepository loyalProgramRepository;
     @Autowired private ClientRepository clientRepository;
     @Autowired private CardRepository cardRepository;
-    @Autowired
-    private DiscountLoyalProgramRepository discountLoyalProgramRepository;
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
-        discountLoyalProgramRepository.save(new DiscountLoyalProgram(BigDecimal.ZERO));
+       loyalProgramRepository.save(new DiscountLoyalProgram(BigDecimal.valueOf(10), BigDecimal.valueOf(10)));
         return merchantRepository.save(merchant);
     }
 
@@ -54,10 +53,9 @@ public class AddingServiceImpl implements AddingService {
 
     @Override
     public List<Client> addClients(List<Client> clients) {
-        return clients.parallelStream().map(currentClient -> {
+        return clients.parallelStream().peek(currentClient -> {
             clientRepository.save(currentClient);
             generateAndSetCard(currentClient);
-            return currentClient;
         }).toList();
     }
 
