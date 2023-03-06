@@ -1,6 +1,5 @@
-package com.example.loyalProgram.merchantModule.entities.services;
+package com.example.loyalProgram.loyalPrograms.baseLoyalProgram;
 
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
 import com.example.loyalProgram.saleModule.entities.Sale;
 
 public interface LoyalProgramService<T extends LoyalProgram> {

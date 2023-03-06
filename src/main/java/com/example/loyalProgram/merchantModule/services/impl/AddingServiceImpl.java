@@ -5,9 +5,7 @@ import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.merchantModule.entities.*;
-import com.example.loyalProgram.merchantModule.entities.loyals.AddPointsLoyalProgram;
-import com.example.loyalProgram.merchantModule.entities.loyals.BirthdayLoyalProgram;
-import com.example.loyalProgram.merchantModule.entities.loyals.DiscountLoyalProgram;
+import com.example.loyalProgram.loyalPrograms.redeemPointsLoyalProgram.RedeemPointsLoyalProgram;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
@@ -15,8 +13,6 @@ import com.example.loyalProgram.merchantModule.services.AddingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,7 +26,7 @@ public class AddingServiceImpl implements AddingService {
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
-       loyalProgramRepository.save(new DiscountLoyalProgram(BigDecimal.valueOf(10), BigDecimal.valueOf(10)));
+       loyalProgramRepository.save(new RedeemPointsLoyalProgram(20));
         return merchantRepository.save(merchant);
     }
 

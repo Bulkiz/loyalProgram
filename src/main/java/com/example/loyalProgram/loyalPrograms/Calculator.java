@@ -1,4 +1,4 @@
-package com.example.loyalProgram;
+package com.example.loyalProgram.loyalPrograms;
 
 
 import java.math.BigDecimal;

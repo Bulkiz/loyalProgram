@@ -1,5 +1,6 @@
-package com.example.loyalProgram.merchantModule.entities.loyals;
+package com.example.loyalProgram.loyalPrograms.discountLoyalProgram;
 
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -13,9 +14,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @DiscriminatorValue("DISCOUNT")
-public class DiscountLoyalProgram extends LoyalProgram{
+public class DiscountLoyalProgram extends LoyalProgram {
     @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal discountPercentage;
-    private BigDecimal priority;
+    private Integer priority;
 
 }

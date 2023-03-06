@@ -1,14 +1,14 @@
-package com.example.loyalProgram.merchantModule.entities.services;
+package com.example.loyalProgram.loyalPrograms.addPointsLoyalProgram;
 
-import com.example.loyalProgram.Calculator;
+import com.example.loyalProgram.loyalPrograms.Calculator;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.CardHistory;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
-import com.example.loyalProgram.merchantModule.entities.loyals.AddPointsLoyalProgram;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
-public class AddPointsLoyalProgramService implements LoyalProgramService<AddPointsLoyalProgram>{
+public class AddPointsLoyalProgramService implements LoyalProgramService<AddPointsLoyalProgram> {
     @Autowired
     private CardRepository cardRepository;
     @Autowired
@@ -24,7 +24,7 @@ public class AddPointsLoyalProgramService implements LoyalProgramService<AddPoin
 
     @Override
     public Sale applyProgram(Sale sale, AddPointsLoyalProgram loyalProgram) {
-        cardTransaction(sale, BigDecimal.valueOf(15));
+        cardTransaction(sale, sale.getDiscountedPrice());
         return null;
     }
 

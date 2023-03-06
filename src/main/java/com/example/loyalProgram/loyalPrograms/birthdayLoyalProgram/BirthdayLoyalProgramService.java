@@ -1,7 +1,7 @@
-package com.example.loyalProgram.merchantModule.entities.services;
+package com.example.loyalProgram.loyalPrograms.birthdayLoyalProgram;
 
-import com.example.loyalProgram.merchantModule.entities.loyals.BirthdayLoyalProgram;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -5,9 +5,9 @@ import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
-import com.example.loyalProgram.merchantModule.entities.services.LoyalProgramService;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @Service
 public class SaleServiceImpl implements SaleService {
@@ -33,19 +32,9 @@ public class SaleServiceImpl implements SaleService {
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private MerchantRepository merchantRepository;
-    @Autowired
-    private SaleRepository saleRepository;
-    @Autowired
-    private CardRepository cardRepository;
-    @Autowired
-    private CardHistoryRepository cardHistoryRepository;
-    @Autowired
     private TierRepository tierRepository;
     @Autowired
     private LoyalProgramRepository loyalProgramRepository;
-    @Autowired
-    private SaleBonusRepository saleBonusRepository;
     @Autowired
     private ApplicationContext applicationContext;
     Map<String, LoyalProgramService> beansOfType;

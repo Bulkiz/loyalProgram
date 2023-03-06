@@ -1,4 +1,4 @@
-package com.example.loyalProgram.merchantModule.entities.loyals;
+package com.example.loyalProgram.loyalPrograms.baseLoyalProgram;
 
 import com.example.loyalProgram.baseEntity.BaseEntity;
 import com.example.loyalProgram.merchantModule.entities.Tier;

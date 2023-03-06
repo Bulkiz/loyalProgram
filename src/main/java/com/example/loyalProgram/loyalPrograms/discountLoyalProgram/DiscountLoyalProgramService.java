@@ -1,13 +1,13 @@
-package com.example.loyalProgram.merchantModule.entities.services;
+package com.example.loyalProgram.loyalPrograms.discountLoyalProgram;
 
-import com.example.loyalProgram.Calculator;
+import com.example.loyalProgram.loyalPrograms.Calculator;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.merchantModule.entities.loyals.DiscountLoyalProgram;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.entities.SaleBonus;
 import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
