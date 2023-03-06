@@ -5,7 +5,6 @@ import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;

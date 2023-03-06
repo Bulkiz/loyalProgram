@@ -1,10 +1,11 @@
 package com.example.loyalProgram.merchantModule.controllers;
 
 import com.example.loyalProgram.clientModule.DTOs.ClientDTO;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import com.example.loyalProgram.merchantModule.DTOs.MerchantDTO;
 import com.example.loyalProgram.merchantModule.DTOs.TierDTO;
 import com.example.loyalProgram.clientModule.entities.Client;
-import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.AddingService;
@@ -32,7 +33,9 @@ public class AddingController {
                 map(tierDTO -> {
                    List<LoyalProgram> loyalPrograms = tierDTO.getLoyalPrograms().parallelStream()
                             .map(loyalProgramDTO ->
-                                modelMapper.map(loyalProgramDTO, LoyalProgram.class)).toList();
+                               (LoyalProgram) modelMapper.map(loyalProgramDTO,
+                                       LoyalProgramType.valueOf(loyalProgramDTO.getType().toUpperCase()).getClazz())
+                            ).toList();
 
                     Tier tier = modelMapper.map(tierDTO, Tier.class);
                     tier.setLoyalPrograms(loyalPrograms);
