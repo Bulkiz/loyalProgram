@@ -25,7 +25,7 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
     public Sale applyProgram(Sale sale, UsePointsLoyalProgram loyalProgram) {
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow();
         updateStatusAndBalanceByDate(card);
-        redeemPoints(card, sale.getUsedPoints(), sale);
+        usePoints(card, sale.getUsedPoints(), sale);
         return sale;
     }
     private void updateStatusAndBalanceByDate(Card card) {
@@ -43,20 +43,14 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
         });
     }
 
-    private void redeemPoints(Card card, BigDecimal usedPoints, Sale sale) {
+    private void usePoints(Card card, BigDecimal usedPoints, Sale sale) {
         BigDecimal cardBalance = card.getBalance();
-
         if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0) {
-
             card.setBalance(cardBalance.subtract(usedPoints));
-
             sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
             sale.setDiscountedPrice(sale.getDiscountedPrice().add(usedPoints));
-
             generateRedeemPointsCardHistory(card, usedPoints);
-
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
-
             for (CardHistory cardHistory : cardHistoryList) {
                 if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0) {
                     usedPoints = usedPoints.subtract(cardHistory.getAvailablePoints());

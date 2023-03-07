@@ -13,6 +13,7 @@ import com.example.loyalProgram.merchantModule.services.AddingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -36,8 +37,7 @@ public class AddingServiceImpl implements AddingService {
             tierRepository.save(currentTier);
             currentTier.getLoyalPrograms().forEach(loyalProgram -> {
                 loyalProgram.setTier(currentTier);
-
-
+                loyalProgram.setExpirationDate(LocalDate.now().plusMonths(1));
             });
             loyalProgramRepository.saveAll(currentTier.getLoyalPrograms());
         }).toList();

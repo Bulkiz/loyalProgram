@@ -25,12 +25,12 @@ public class AddPointsLoyalProgramService implements LoyalProgramService<AddPoin
     @Override
     public Sale applyProgram(Sale sale, AddPointsLoyalProgram loyalProgram) {
         cardTransaction(sale, sale.getDiscountedPrice());
-        return null;
+        return sale;
     }
 
-    private void cardTransaction(Sale currSale , BigDecimal discountPercentage) {
-        Card card = cardRepository.findById(currSale.getCard().getId()).orElseThrow();
-        BigDecimal currPoints = Calculator.calculatePercentage(currSale.getSummaryPrice(), discountPercentage);
+    private void cardTransaction(Sale sale , BigDecimal discountPercentage) {
+        Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow();
+        BigDecimal currPoints = Calculator.calculatePercentage(sale.getSummaryPrice(), discountPercentage);
         card.setBalance(card.getBalance().add(currPoints));
         cardRepository.save(card);
         generateCardHistory(card, currPoints);
