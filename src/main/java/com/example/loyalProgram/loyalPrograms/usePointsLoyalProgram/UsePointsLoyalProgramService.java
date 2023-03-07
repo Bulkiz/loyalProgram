@@ -47,16 +47,21 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
         BigDecimal cardBalance = card.getBalance();
 
         if (cardBalance.compareTo(usedPoints) >= 0 && usedPoints.compareTo(BigDecimal.ZERO) != 0) {
+
             card.setBalance(cardBalance.subtract(usedPoints));
+
             sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
             sale.setDiscountedPrice(sale.getDiscountedPrice().add(usedPoints));
+
             generateRedeemPointsCardHistory(card, usedPoints);
+
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
+
             for (CardHistory cardHistory : cardHistoryList) {
                 if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0) {
+                    usedPoints = usedPoints.subtract(cardHistory.getAvailablePoints());
                     cardHistory.setPointStatus(PointStatus.UNAVAILABLE);
                     setCurrentCardHistory(cardHistory, cardHistory.getReceivedPoints(), BigDecimal.ZERO);
-                    usedPoints = usedPoints.subtract(cardHistory.getAvailablePoints());
                 } else if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) < 0) {
                     setCurrentCardHistory(cardHistory, cardHistory.getUsedPoints().add(usedPoints), cardHistory.getAvailablePoints().subtract(usedPoints));
                     break;
@@ -71,7 +76,7 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
     private void generateRedeemPointsCardHistory(Card card, BigDecimal usedPoints) {
         cardHistoryRepository.save(CardHistory.builder()
                 .card(card)
-                .receivedPoints(usedPoints)
+                .usedPoints(usedPoints)
                 .earnDate(LocalDateTime.now())
                 .transactionStatus(TransactionStatus.USED)
                 .build());
