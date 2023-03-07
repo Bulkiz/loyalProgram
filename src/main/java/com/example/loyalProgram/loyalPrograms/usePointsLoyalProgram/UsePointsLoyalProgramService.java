@@ -1,4 +1,4 @@
-package com.example.loyalProgram.loyalPrograms.redeemPointsLoyalProgram;
+package com.example.loyalProgram.loyalPrograms.usePointsLoyalProgram;
 
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.CardHistory;
@@ -16,17 +16,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RedeemPointsLoyalProgramService implements LoyalProgramService<RedeemPointsLoyalProgram> {
+public class UsePointsLoyalProgramService implements LoyalProgramService<UsePointsLoyalProgram> {
     @Autowired
     CardRepository cardRepository;
     @Autowired
     CardHistoryRepository cardHistoryRepository;
     @Override
-    public Sale applyProgram(Sale sale, RedeemPointsLoyalProgram loyalProgram) {
+    public Sale applyProgram(Sale sale, UsePointsLoyalProgram loyalProgram) {
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow();
         updateStatusAndBalanceByDate(card);
         redeemPoints(card, sale.getUsedPoints(), sale);
-        return null;
+        return sale;
     }
     private void updateStatusAndBalanceByDate(Card card) {
         LocalDateTime currentDate = LocalDateTime.now();

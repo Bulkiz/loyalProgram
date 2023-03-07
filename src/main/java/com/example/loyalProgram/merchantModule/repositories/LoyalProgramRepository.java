@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface LoyalProgramRepository extends JpaRepository<LoyalProgram, Integer> {
-    @Query(nativeQuery = true, value = "select * from loyal_program lp where lp .tier_id = :tier_id order by priority asc")
-    List<LoyalProgram> findAllByTier(Integer tier_id);
-
+    @Query(nativeQuery = true, value = "select * from loyal_program lp where lp.tier_id = :tierId order by priority asc")
+    List<LoyalProgram> findAllByTier(Integer tierId);
 }

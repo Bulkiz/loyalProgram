@@ -1,4 +1,4 @@
-package com.example.loyalProgram.loyalPrograms.redeemPointsLoyalProgram;
+package com.example.loyalProgram.loyalPrograms.usePointsLoyalProgram;
 
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import jakarta.persistence.DiscriminatorValue;
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@DiscriminatorValue("REDEEM_POINTS")
-public class RedeemPointsLoyalProgram extends LoyalProgram {
+@DiscriminatorValue("USE_POINTS")
+public class UsePointsLoyalProgram extends LoyalProgram {
     private Integer priority;
 }
