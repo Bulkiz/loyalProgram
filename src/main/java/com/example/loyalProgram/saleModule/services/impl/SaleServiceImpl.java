@@ -55,7 +55,7 @@ public class SaleServiceImpl implements SaleService {
 
     private void updateAmountAndCheckTier(Client client, BigDecimal summaryPrice) {
         client.setAmountSpend(client.getAmountSpend().add(summaryPrice));
-        if (client.getTier().getTierAmount().compareTo(client.getAmountSpend()) <= 0) {
+        if (client.getTier().getTierAmount().compareTo(client.getAmountSpend()) >= 0) {
             Tier tier = tierRepository.
                     findFirstByMerchantAndTierAmountGreaterThanOrderByTierAmount(client.getMerchant(),
                             client.getTier().getTierAmount());
