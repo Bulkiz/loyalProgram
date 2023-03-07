@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -123,7 +124,7 @@ public class TestMakeSaleUsePoints {
     public void testMakeSell() {
         saleService.makeSale(testSaleForCreatingCard);
         BigDecimal result = saleService.makeSale(testSale);
-        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
+        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2, RoundingMode.FLOOR));
         Assertions.assertEquals(saleRepository.findById(testSaleForCreatingCard.getId()).orElseThrow().getId(), testSaleForCreatingCard.getId());
     }
 
