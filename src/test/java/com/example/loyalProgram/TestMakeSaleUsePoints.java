@@ -4,9 +4,11 @@ import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
-import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.enums.PointStatus;
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.addPointsLoyalProgram.AddPointsLoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.discountLoyalProgram.DiscountLoyalProgram;
+import com.example.loyalProgram.loyalPrograms.usePointsLoyalProgram.UsePointsLoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
@@ -28,7 +30,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
-
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
 public class TestMakeSaleUsePoints {
@@ -37,16 +38,15 @@ public class TestMakeSaleUsePoints {
     @Autowired
     AddingServiceImpl addingService;
     Merchant testMerchant = mock(Merchant.class);
+    Sale testSaleForCreatingCard = mock(Sale.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
-    LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramUsePoints = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgram = mock(AddPointsLoyalProgram.class);
+    LoyalProgram testLoyalProgramDiscount = mock(DiscountLoyalProgram.class);
+    LoyalProgram testLoyalProgramUsePoints = mock(UsePointsLoyalProgram.class);
     Tier testTier = mock(Tier.class);
     @Autowired
     private SaleRepository saleRepository;
-    @Autowired
-    private ClientRepository clientRepository;
     @Autowired
     private CardHistoryRepository cardHistoryRepository;
     @Autowired
@@ -57,24 +57,18 @@ public class TestMakeSaleUsePoints {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgramDiscount = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgramDiscount = DiscountLoyalProgram.builder()
                 .priority(10)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.DISCOUNT)
                 .build();
 
-        testLoyalProgramUsePoints = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgramUsePoints = UsePointsLoyalProgram.builder()
                 .priority(20)
-                .type(LoyalProgramType.USE_POINTS)
                 .build();
 
-        testLoyalProgram = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgram = AddPointsLoyalProgram.builder()
                 .priority(30)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.ADD_POINTS)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
@@ -108,34 +102,38 @@ public class TestMakeSaleUsePoints {
 
         addingService.addClients(testListClients);
 
+        testSaleForCreatingCard = Sale.builder()
+                .client(testClient)
+                .merchant(testMerchant)
+                .originalPrice(BigDecimal.valueOf(100))
+                .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
+               .usedPoints(BigDecimal.ZERO)
+                .build();
+
         testSale = Sale.builder()
                 .client(testClient)
                 .merchant(testMerchant)
                 .originalPrice(BigDecimal.valueOf(100))
                 .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
-                .usedPoints(BigDecimal.ZERO)
+                .usedPoints(BigDecimal.valueOf(5))
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        saleService.makeSale(testSale);
-        testSale.setUsedPoints(BigDecimal.valueOf(5));
+        saleService.makeSale(testSaleForCreatingCard);
         BigDecimal result = saleService.makeSale(testSale);
         Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
+        Assertions.assertEquals(saleRepository.findById(testSaleForCreatingCard.getId()).orElseThrow().getId(), testSaleForCreatingCard.getId());
     }
 
     @Test
     public void testMakeSaleExpirePoints() throws InterruptedException {
-        Sale secondSale = testSale;
-        saleService.makeSale(testSale);
-        Card card = testSale.getCard();
+        Sale secondSale = testSaleForCreatingCard;
+        saleService.makeSale(testSaleForCreatingCard);
+        Card card = testSaleForCreatingCard.getCard();
         Thread.sleep(11000);
         saleService.makeSale(secondSale);
         Assertions.assertEquals(cardHistoryRepository.findFirstByCard(card).getPointStatus(), PointStatus.EXPIRED);
     }
 }
-
-
-
