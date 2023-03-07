@@ -2,18 +2,13 @@ package com.example.loyalProgram.saleModule.services.impl;
 
 
 import com.example.loyalProgram.clientModule.entities.Client;
-import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
-import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
-import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
-import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -74,7 +69,7 @@ public class SaleServiceImpl implements SaleService {
     private List<LoyalProgram> getLoyalProgramsSorted(Sale sale) {
         Client client = clientRepository.findById(sale.getClient().getId()).orElseThrow();
         Tier currTier = tierRepository.findById(client.getTier().getId()).orElseThrow();
-        return loyalProgramRepository.findAllByTier(currTier);
+        return loyalProgramRepository.findAllByTier(currTier.getId());
     }
 
 }

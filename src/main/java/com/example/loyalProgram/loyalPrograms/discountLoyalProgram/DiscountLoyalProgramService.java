@@ -19,6 +19,8 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
     @Autowired private ClientRepository clientRepository;
     @Autowired private MerchantRepository merchantRepository;
     @Autowired private SaleRepository saleRepository;
+
+    private BigDecimal currDiscountPrice;
     @Override
     public Sale applyProgram(Sale currSale, DiscountLoyalProgram discountLoyalProgram) {
         Sale sale;
@@ -32,6 +34,11 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
         sale.setMerchant(merchantRepository.findById(sale.getMerchant().getId()).orElseThrow());
         sale.setOriginalPrice(sale.getOriginalPrice());
         BigDecimal discountedPrice = Calculator.calculatePercentage(sale.getOriginalPrice(), discountPercentage);
+        currDiscountPrice = discountedPrice;
+        if(sale.getDiscountedPrice() != null) {
+            currDiscountPrice =  Calculator.calculatePercentage(sale.getSummaryPrice(), discountPercentage);
+            discountedPrice = sale.getDiscountedPrice().add(currDiscountPrice );
+        }
         sale.setDiscountedPrice(discountedPrice);
         sale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
         saleRepository.save(sale);
@@ -42,7 +49,7 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
                 .loyalProgram(discountLoyalProgram)
                 .sale(sale)
                 .currentPrice(sale.getSummaryPrice())
-                .savedMoney(sale.getDiscountedPrice())
+                .savedMoney(currDiscountPrice)
                 .build();
     }
 }
