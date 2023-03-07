@@ -1,14 +1,14 @@
 package com.example.loyalProgram;
 
-import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
-import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.discountLoyalProgram.DiscountLoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSaleAddPoints {
+public class TestDiscountLoyalProgram {
     @Autowired
     SaleService saleService;
     @Autowired
@@ -36,44 +37,31 @@ public class TestMakeSaleAddPoints {
     Merchant testMerchant = mock(Merchant.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
-    LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgram = mock(DiscountLoyalProgram.class);
     Tier testTier = mock(Tier.class);
-
     @Autowired
-    CardRepository cardRepository;
+    private SaleRepository saleRepository;
     @Autowired
-    private ClientRepository clientRepository;
+    private CardRepository cardRepository;
 
     @BeforeEach
     public void setUp() {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgramDiscount = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgram = DiscountLoyalProgram.builder()
                 .priority(10)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.DISCOUNT)
-                .build();
-
-
-        testLoyalProgram = LoyalProgram.builder()
-                .name("TestLoyalProgram")
-                .priority(30)
-                .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.ADD_POINTS)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
-        testListLoyalProgram.add(testLoyalProgramDiscount);
         testListLoyalProgram.add(testLoyalProgram);
 
         testTier = Tier.builder()
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.valueOf(100))
+                .tierAmount(BigDecimal.TEN)
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
@@ -100,17 +88,14 @@ public class TestMakeSaleAddPoints {
                 .merchant(testMerchant)
                 .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
                 .originalPrice(BigDecimal.valueOf(100))
+                .usedPoints(BigDecimal.ZERO)
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        Card testCard= testClient.getCards().get(0);
-        BigDecimal testCardBalance = testCard.getBalance();
-        saleService.makeSale(testSale);
-        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),testCardBalance.add(BigDecimal.valueOf(9)).setScale(2));
-
+        Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2, RoundingMode.FLOOR));
+        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }
-
 

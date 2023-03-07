@@ -40,7 +40,7 @@ public class AddPointsLoyalProgramService implements LoyalProgramService<AddPoin
         LocalDateTime earnDate = LocalDateTime.now();
         cardHistoryRepository.save(CardHistory.builder().
                 earnDate(earnDate)
-                .expirationDate(earnDate.plusSeconds(9000000))
+                .expirationDate(earnDate.plusSeconds(9))
                 .pointStatus(PointStatus.AVAILABLE)
                 .receivedPoints(currPoints)
                 .usedPoints(BigDecimal.ZERO)

@@ -3,7 +3,8 @@ package com.example.loyalProgram;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.discountLoyalProgram.DiscountLoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
@@ -35,8 +36,8 @@ public class TestMakeSaleUpgradeClientTier {
     Merchant testMerchant = mock(Merchant.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
-    LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
-    LoyalProgram testLoyalProgramDiscount = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgram = mock(DiscountLoyalProgram.class);
+    LoyalProgram testLoyalProgramDiscount = mock(DiscountLoyalProgram.class);
     Tier firstTestTier = mock(Tier.class);
     Tier secondTier = mock(Tier.class);
 
@@ -48,19 +49,15 @@ public class TestMakeSaleUpgradeClientTier {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgramDiscount = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgramDiscount = DiscountLoyalProgram.builder()
                 .priority(10)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.DISCOUNT)
                 .build();
 
 
-        testLoyalProgram = LoyalProgram.builder()
-                .name("TestLoyalProgram")
+        testLoyalProgram = DiscountLoyalProgram.builder()
                 .priority(30)
                 .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.DISCOUNT)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();

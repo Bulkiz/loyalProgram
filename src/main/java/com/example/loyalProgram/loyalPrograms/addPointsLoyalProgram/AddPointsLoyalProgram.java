@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @DiscriminatorValue("ADD_POINTS")
 public class AddPointsLoyalProgram extends LoyalProgram {
     private Integer priority;

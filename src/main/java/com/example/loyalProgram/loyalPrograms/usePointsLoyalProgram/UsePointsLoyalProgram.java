@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @DiscriminatorValue("USE_POINTS")
 public class UsePointsLoyalProgram extends LoyalProgram {
     private Integer priority;

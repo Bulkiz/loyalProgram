@@ -1,13 +1,14 @@
 package com.example.loyalProgram;
 
+import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
-import com.example.loyalProgram.merchantModule.entities.loyals.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.addPointsLoyalProgram.AddPointsLoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application.yml")
-public class TestMakeSaleDiscount {
+public class TestAddPointsLoyalProgram {
     @Autowired
     SaleService saleService;
     @Autowired
@@ -35,23 +37,21 @@ public class TestMakeSaleDiscount {
     Merchant testMerchant = mock(Merchant.class);
     Sale testSale = mock(Sale.class);
     Client testClient = mock(Client.class);
-    LoyalProgram testLoyalProgram = mock(LoyalProgram.class);
+    LoyalProgram testLoyalProgram = mock(AddPointsLoyalProgram.class);
     Tier testTier = mock(Tier.class);
+
     @Autowired
-    private SaleRepository saleRepository;
-    @Autowired
-    private CardRepository cardRepository;
+    CardRepository cardRepository;
 
     @BeforeEach
     public void setUp() {
         testMerchant = Merchant.builder().name("TestMerchant").build();
         addingService.addMerchant(testMerchant);
 
-        testLoyalProgram = LoyalProgram.builder()
-                .name("TestLoyalProgram")
-                .priority(10)
-                .discountPercentage(BigDecimal.TEN)
-                .type(LoyalProgramType.DISCOUNT)
+        testLoyalProgram = AddPointsLoyalProgram.builder()
+                .priority(30)
+                .scale(BigDecimal.valueOf(1.5))
+                .discountPercentage(BigDecimal.valueOf(20))
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
@@ -61,7 +61,7 @@ public class TestMakeSaleDiscount {
                 .name("TestTier")
                 .merchant(testMerchant)
                 .loyalPrograms(testListLoyalProgram)
-                .tierAmount(BigDecimal.TEN)
+                .tierAmount(BigDecimal.valueOf(100))
                 .build();
 
         List<Tier> testListTier = new LinkedList<>();
@@ -86,16 +86,22 @@ public class TestMakeSaleDiscount {
         testSale = Sale.builder()
                 .client(testClient)
                 .merchant(testMerchant)
+                .summaryPrice(BigDecimal.valueOf(90))
+                .discountedPrice(BigDecimal.valueOf(10))
                 .card(cardRepository.findById(testClient.getCards().get(0).getId()).orElseThrow())
                 .originalPrice(BigDecimal.valueOf(100))
-                .usedPoints(BigDecimal.ZERO)
                 .build();
     }
 
     @Test
     public void testMakeSell() {
-        Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2));
-        Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
+        Card testCard= testClient.getCards().get(0);
+        BigDecimal testCardBalance = testCard.getBalance();
+        saleService.makeSale(testSale);
+        Assertions.assertEquals(cardRepository.findById(testCard.getId()).orElseThrow().getBalance(),
+                testCardBalance.add(BigDecimal.valueOf(18)).setScale(2, RoundingMode.FLOOR));
+
     }
 }
+
 
