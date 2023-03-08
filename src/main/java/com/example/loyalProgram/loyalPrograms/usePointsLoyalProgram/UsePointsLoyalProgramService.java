@@ -6,8 +6,9 @@ import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
-import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.exceptionHandler.notFoundExceptions.CardNotFoundException;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
+import com.example.loyalProgram.saleModule.entities.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
     CardHistoryRepository cardHistoryRepository;
     @Override
     public Sale applyProgram(Sale sale, UsePointsLoyalProgram loyalProgram) {
-        Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow();
+        Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow(CardNotFoundException::new);
         updateStatusAndBalanceByDate(card);
         usePoints(card, sale.getUsedPoints(), sale);
         return sale;

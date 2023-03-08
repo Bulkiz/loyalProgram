@@ -4,6 +4,9 @@ import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
+import com.example.loyalProgram.exceptionHandler.notFoundExceptions.CardNotFoundException;
+import com.example.loyalProgram.exceptionHandler.notFoundExceptions.ClientNotFoundException;
+import com.example.loyalProgram.exceptionHandler.notFoundExceptions.MerchantNotFoundException;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
@@ -20,14 +23,16 @@ public class SaleMapper {
 
     public Sale saleMapper(SaleDTO saleDTO){
         Sale sale = new Sale();
-        Client client = clientRepository.findById(saleDTO.getClientId()).orElseThrow();
-        Merchant merchant = merchantRepository.findById(saleDTO.getMerchantId()).orElseThrow();
-        Card card = cardRepository.findById(saleDTO.getCardId()).orElseThrow();
-        sale.setMerchant(merchant);
-        sale.setClient(client);
-        sale.setCard(card);
-        sale.setOriginalPrice(saleDTO.getPrice());
-        sale.setUsedPoints(saleDTO.getUsedPoints());
+        Client client = clientRepository.findById(saleDTO.getClientId()).orElseThrow(ClientNotFoundException::new);
+        Merchant merchant = merchantRepository.findById(saleDTO.getMerchantId()).orElseThrow(MerchantNotFoundException::new);
+        Card card = cardRepository.findById(saleDTO.getCardId()).orElseThrow(CardNotFoundException::new);
+        sale = Sale.builder()
+                .merchant(merchant)
+                .client(client)
+                .card(card)
+                .originalPrice(saleDTO.getPrice())
+                .usedPoints(saleDTO.getUsedPoints())
+                .build();
         return sale;
     }
 }
