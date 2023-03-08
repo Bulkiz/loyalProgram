@@ -19,5 +19,5 @@ public class AddPointsLoyalProgram extends LoyalProgram {
     private Integer priority;
     private BigDecimal scale;
     @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal discountPercentage;
+    private BigDecimal addPointsPercentage;
 }

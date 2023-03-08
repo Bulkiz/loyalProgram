@@ -1,6 +1,9 @@
 package com.example.loyalProgram.saleModule.DTOs;
 
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 @Getter
@@ -10,6 +13,8 @@ public class SaleDTO {
     private Integer clientId;
     private Integer merchantId;
     private Integer cardId;
+    @NotNull(message = "You should provide price")
     private BigDecimal price;
+    @NotNull
     private BigDecimal usedPoints;
 }

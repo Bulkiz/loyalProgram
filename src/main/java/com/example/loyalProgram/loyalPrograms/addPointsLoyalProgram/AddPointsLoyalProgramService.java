@@ -24,7 +24,7 @@ public class AddPointsLoyalProgramService implements LoyalProgramService<AddPoin
 
     @Override
     public Sale applyProgram(Sale sale, AddPointsLoyalProgram loyalProgram) {
-        cardTransaction(sale, loyalProgram.getDiscountPercentage());
+        cardTransaction(sale, loyalProgram.getAddPointsPercentage());
         return sale;
     }
 

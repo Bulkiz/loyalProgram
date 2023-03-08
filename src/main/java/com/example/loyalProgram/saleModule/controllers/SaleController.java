@@ -3,6 +3,7 @@ package com.example.loyalProgram.saleModule.controllers;
 import com.example.loyalProgram.saleModule.DTOs.SaleDTO;
 import com.example.loyalProgram.saleModule.DTOs.SaleMapper;
 import com.example.loyalProgram.saleModule.services.SaleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class SaleController {
     @Autowired private SaleMapper saleMapper;
 
     @PostMapping
-        public String makeSell(@RequestBody SaleDTO saleDTO){
+        public String makeSell(@Valid @RequestBody SaleDTO saleDTO){
         return "You have successfully saved "  + saleService.makeSale(saleMapper.saleMapper(saleDTO)) + " !";
     }
 
