@@ -1,6 +1,6 @@
 package com.example.loyalProgram.saleModule.entities;
 
-import com.example.loyalProgram.baseEntity.BaseEntity;
+import com.example.loyalProgram.basePackage.BaseEntity;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.merchantModule.entities.Merchant;

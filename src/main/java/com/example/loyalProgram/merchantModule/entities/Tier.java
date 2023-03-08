@@ -1,6 +1,6 @@
 package com.example.loyalProgram.merchantModule.entities;
 
-import com.example.loyalProgram.baseEntity.BaseEntity;
+import com.example.loyalProgram.basePackage.BaseEntity;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import jakarta.persistence.*;
 import lombok.*;

@@ -11,7 +11,7 @@ import com.example.loyalProgram.loyalPrograms.discountLoyalProgram.DiscountLoyal
 import com.example.loyalProgram.loyalPrograms.usePointsLoyalProgram.UsePointsLoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
+import com.example.loyalProgram.merchantModule.services.impl.MerchantServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
@@ -37,7 +37,7 @@ public class TestMakeSaleUsePoints {
     @Autowired
     SaleService saleService;
     @Autowired
-    AddingServiceImpl addingService;
+    MerchantServiceImpl addingService;
     Merchant testMerchant = mock(Merchant.class);
     Sale testSaleForCreatingCard = mock(Sale.class);
     Sale testSale = mock(Sale.class);
@@ -91,7 +91,6 @@ public class TestMakeSaleUsePoints {
 
         testClient = Client.builder()
                 .name("TestClient")
-                .merchant(testMerchant)
                 .tier(testTier)
                 .cards(new ArrayList<>())
                 .birthday(LocalDate.now())
@@ -101,7 +100,7 @@ public class TestMakeSaleUsePoints {
         List<Client> testListClients = new LinkedList<>();
         testListClients.add(testClient);
 
-        addingService.addClients(testListClients);
+        addingService.addClients(testMerchant.getId(), testListClients);
 
         testSaleForCreatingCard = Sale.builder()
                 .client(testClient)

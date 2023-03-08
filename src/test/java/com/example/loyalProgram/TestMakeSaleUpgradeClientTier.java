@@ -7,7 +7,7 @@ import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import com.example.loyalProgram.loyalPrograms.discountLoyalProgram.DiscountLoyalProgram;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.merchantModule.services.impl.AddingServiceImpl;
+import com.example.loyalProgram.merchantModule.services.impl.MerchantServiceImpl;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +29,7 @@ public class TestMakeSaleUpgradeClientTier {
     @Autowired
     SaleService saleService;
     @Autowired
-    AddingServiceImpl addingService;
+    MerchantServiceImpl addingService;
 
     @Autowired
     ClientRepository clientRepository;
@@ -88,7 +88,6 @@ public class TestMakeSaleUpgradeClientTier {
 
         testClient = Client.builder()
                 .name("TestClient")
-                .merchant(testMerchant)
                 .tier(firstTestTier)
                 .cards(new ArrayList<>())
                 .birthday(LocalDate.now())
@@ -98,7 +97,7 @@ public class TestMakeSaleUpgradeClientTier {
         List<Client> testListClients = new LinkedList<>();
         testListClients.add(testClient);
 
-        addingService.addClients(testListClients);
+        addingService.addClients(testMerchant.getId(), testListClients);
 
         testSale = Sale.builder()
                 .client(testClient)

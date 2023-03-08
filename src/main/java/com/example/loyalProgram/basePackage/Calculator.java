@@ -1,4 +1,4 @@
-package com.example.loyalProgram.loyalPrograms;
+package com.example.loyalProgram.basePackage;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

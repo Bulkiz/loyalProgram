@@ -1,6 +1,6 @@
 package com.example.loyalProgram.loyalPrograms.discountLoyalProgram;
 
-import com.example.loyalProgram.loyalPrograms.Calculator;
+import com.example.loyalProgram.basePackage.Calculator;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.entities.SaleBonus;

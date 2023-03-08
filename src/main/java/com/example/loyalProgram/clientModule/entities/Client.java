@@ -3,7 +3,7 @@ package com.example.loyalProgram.clientModule.entities;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.baseEntity.*;
+import com.example.loyalProgram.basePackage.*;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,15 +1,14 @@
 package com.example.loyalProgram.merchantModule.services.impl;
 
-import com.example.loyalProgram.clientModule.entities.Card;
+import com.example.loyalProgram.basePackage.GenerateCard;
 import com.example.loyalProgram.clientModule.entities.Client;
-import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
-import com.example.loyalProgram.merchantModule.services.AddingService;
+import com.example.loyalProgram.merchantModule.services.MerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +16,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AddingServiceImpl implements AddingService {
+public class MerchantServiceImpl implements MerchantService {
 
     @Autowired private MerchantRepository merchantRepository;
     @Autowired private TierRepository tierRepository;
     @Autowired private LoyalProgramRepository loyalProgramRepository;
     @Autowired private ClientRepository clientRepository;
-    @Autowired private CardRepository cardRepository;
+    @Autowired private GenerateCard generateCard;
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
@@ -51,20 +50,12 @@ public class AddingServiceImpl implements AddingService {
     }
 
     @Override
-    public List<Client> addClients(List<Client> clients) {
+    public List<Client> addClients(Integer merchantId, List<Client> clients) {
         return clients.parallelStream().peek(currentClient -> {
+            currentClient.setMerchant(merchantRepository.findById(merchantId).orElseThrow());
             clientRepository.save(currentClient);
-            generateAndSetCard(currentClient);
+            generateCard.generateAndSetCard(currentClient);
         }).toList();
     }
 
-    private void generateAndSetCard(Client client) {
-        Card card = new Card();
-        List<Card> currCards = client.getCards();
-        card.setIsActive(true);
-        currCards.add(card);
-        card.setClient(client);
-        client.setCards(currCards);
-        cardRepository.save(card);
-    }
 }

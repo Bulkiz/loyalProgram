@@ -1,6 +1,6 @@
 package com.example.loyalProgram.loyalPrograms.addPointsLoyalProgram;
 
-import com.example.loyalProgram.loyalPrograms.Calculator;
+import com.example.loyalProgram.basePackage.Calculator;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.CardHistory;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;

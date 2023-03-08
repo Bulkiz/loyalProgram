@@ -6,11 +6,11 @@ import com.example.loyalProgram.merchantModule.entities.Tier;
 
 import java.util.List;
 
-public interface AddingService {
+public interface MerchantService {
     Merchant addMerchant(Merchant merchant);
 
     List<Tier> addTiers(Integer id, List<Tier> tier);
 
-    List<Client> addClients(List<Client> client);
+    List<Client> addClients(Integer merchantId, List<Client> client);
     List<Tier> findAllTiers();
 }

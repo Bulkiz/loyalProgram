@@ -8,7 +8,7 @@ import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.enums.LoyalProgramType;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.merchantModule.services.AddingService;
+import com.example.loyalProgram.merchantModule.services.MerchantService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +17,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/merchant")
-public class AddingController {
+public class MerchantController {
 
-    @Autowired AddingService addingService;
+    @Autowired
+    MerchantService addingService;
     @Autowired ModelMapper modelMapper;
 
-    @PostMapping("/add")
+    @PostMapping
     public MerchantDTO addMerchant(@RequestBody MerchantDTO merchantDTO){
         return modelMapper.map(addingService.addMerchant(modelMapper.map(merchantDTO, Merchant.class)), MerchantDTO.class);
     }
 
-    @PostMapping("addTiers/{merchantId}")
+    @PostMapping("/{merchantId}/addTiers")
     public List<TierDTO> addTiersToMerchant(@PathVariable Integer merchantId, @RequestBody List<TierDTO> tierDTOS){
         return addingService.addTiers(merchantId, tierDTOS.parallelStream().
                 map(tierDTO -> {
@@ -50,9 +51,9 @@ public class AddingController {
                 map(tier -> modelMapper.map(tier, TierDTO.class)).toList();
     }
 
-    @PostMapping("/addClients")
-    public List<ClientDTO> addClients(@RequestBody List<ClientDTO> clientDTOs){
-        return addingService.addClients(clientDTOs.parallelStream().
+    @PostMapping("{merchantId}/addClients")
+    public List<ClientDTO> addClients( @PathVariable Integer merchantId, @RequestBody List<ClientDTO> clientDTOs){
+        return addingService.addClients(merchantId, clientDTOs.parallelStream().
                 map(clientDTO -> modelMapper.map(clientDTO, Client.class)).toList()).parallelStream().
                 map(client -> modelMapper.map(client, ClientDTO.class)).toList();
     }

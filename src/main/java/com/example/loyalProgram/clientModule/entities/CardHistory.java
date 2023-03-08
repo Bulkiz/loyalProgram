@@ -1,6 +1,6 @@
 package com.example.loyalProgram.clientModule.entities;
 
-import com.example.loyalProgram.baseEntity.BaseEntity;
+import com.example.loyalProgram.basePackage.BaseEntity;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
 import jakarta.persistence.Column;
