@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder
-public class SaleDTO {
+public class InputSaleDTO {
     private Integer clientId;
     private Integer merchantId;
     private Integer cardId;

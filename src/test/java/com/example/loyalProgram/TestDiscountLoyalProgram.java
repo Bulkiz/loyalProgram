@@ -93,7 +93,7 @@ public class TestDiscountLoyalProgram {
 
     @Test
     public void testMakeSell() {
-        Assertions.assertEquals(saleService.makeSale(testSale), BigDecimal.valueOf(10).setScale(2, RoundingMode.FLOOR));
+        Assertions.assertEquals(saleService.makeSale(testSale).getDiscountedPrice(), BigDecimal.valueOf(10).setScale(2, RoundingMode.FLOOR));
         Assertions.assertEquals(saleRepository.findById(testSale.getId()).orElseThrow().getId(), testSale.getId());
     }
 }

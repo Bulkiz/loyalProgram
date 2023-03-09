@@ -69,7 +69,7 @@ public class TestMakeSaleUsePoints {
 
         testLoyalProgram = AddPointsLoyalProgram.builder()
                 .priority(30)
-                .discountPercentage(BigDecimal.TEN)
+                .addPointsPercentage(BigDecimal.TEN)
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();
@@ -122,8 +122,8 @@ public class TestMakeSaleUsePoints {
     @Test
     public void testMakeSell() {
         saleService.makeSale(testSaleForCreatingCard);
-        BigDecimal result = saleService.makeSale(testSale);
-        Assertions.assertEquals(result, BigDecimal.valueOf(15).setScale(2, RoundingMode.FLOOR));
+        Sale sale = saleService.makeSale(testSale);
+        Assertions.assertEquals(sale.getDiscountedPrice(), BigDecimal.valueOf(15).setScale(2, RoundingMode.FLOOR));
         Assertions.assertEquals(saleRepository.findById(testSaleForCreatingCard.getId()).orElseThrow().getId(), testSaleForCreatingCard.getId());
     }
 

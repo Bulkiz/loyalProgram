@@ -20,8 +20,7 @@ import java.util.List;
 public class UsePointsLoyalProgramService implements LoyalProgramService<UsePointsLoyalProgram> {
     @Autowired
     CardRepository cardRepository;
-    @Autowired
-    CardHistoryRepository cardHistoryRepository;
+    @Autowired CardHistoryRepository cardHistoryRepository;
     @Override
     public Sale applyProgram(Sale sale, UsePointsLoyalProgram loyalProgram) {
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow(CardNotFoundException::new);
@@ -50,7 +49,7 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
             card.setBalance(cardBalance.subtract(usedPoints));
             sale.setSummaryPrice(sale.getSummaryPrice().subtract(usedPoints));
             sale.setDiscountedPrice(sale.getDiscountedPrice().add(usedPoints));
-            generateRedeemPointsCardHistory(card, usedPoints);
+            generateUsePointsCardHistory(card, usedPoints);
             List<CardHistory> cardHistoryList = cardHistoryRepository.findAllByCardAndPointStatusOrderById(card, PointStatus.AVAILABLE);
             for (CardHistory cardHistory : cardHistoryList) {
                 if (usedPoints.subtract(cardHistory.getAvailablePoints()).compareTo(BigDecimal.ZERO) > 0) {
@@ -68,7 +67,7 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
         }
     }
 
-    private void generateRedeemPointsCardHistory(Card card, BigDecimal usedPoints) {
+    private void generateUsePointsCardHistory(Card card, BigDecimal usedPoints) {
         cardHistoryRepository.save(CardHistory.builder()
                 .card(card)
                 .usedPoints(usedPoints)

@@ -51,7 +51,7 @@ public class TestAddPointsLoyalProgram {
         testLoyalProgram = AddPointsLoyalProgram.builder()
                 .priority(30)
                 .scale(BigDecimal.valueOf(1.5))
-                .discountPercentage(BigDecimal.valueOf(20))
+                .addPointsPercentage(BigDecimal.valueOf(20))
                 .build();
 
         List<LoyalProgram> testListLoyalProgram = new LinkedList<>();

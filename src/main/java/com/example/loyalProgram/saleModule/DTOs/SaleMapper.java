@@ -21,18 +21,27 @@ public class SaleMapper {
     @Autowired
     private CardRepository cardRepository;
 
-    public Sale saleMapper(SaleDTO saleDTO){
-        Sale sale = new Sale();
-        Client client = clientRepository.findById(saleDTO.getClientId()).orElseThrow(ClientNotFoundException::new);
-        Merchant merchant = merchantRepository.findById(saleDTO.getMerchantId()).orElseThrow(MerchantNotFoundException::new);
-        Card card = cardRepository.findById(saleDTO.getCardId()).orElseThrow(CardNotFoundException::new);
-        sale = Sale.builder()
+    public Sale mapInput(InputSaleDTO inputSaleDTO){
+        Client client = clientRepository.findById(inputSaleDTO.getClientId()).orElseThrow(ClientNotFoundException::new);
+        Merchant merchant = merchantRepository.findById(inputSaleDTO.getMerchantId()).orElseThrow(MerchantNotFoundException::new);
+        Card card = cardRepository.findById(inputSaleDTO.getCardId()).orElseThrow(CardNotFoundException::new);
+        return Sale.builder()
                 .merchant(merchant)
                 .client(client)
                 .card(card)
-                .originalPrice(saleDTO.getPrice())
-                .usedPoints(saleDTO.getUsedPoints())
+                .originalPrice(inputSaleDTO.getPrice())
+                .usedPoints(inputSaleDTO.getUsedPoints())
                 .build();
-        return sale;
+    }
+
+    public OutputSaleDTO mapOutput(Sale sale){
+        return OutputSaleDTO.builder()
+                .id(sale.getId())
+                .originalPrice(sale.getOriginalPrice())
+                .discountedPrice(sale.getDiscountedPrice())
+                .summaryPrice(sale.getSummaryPrice())
+                .usedPoints(sale.getUsedPoints())
+                .cardBalance(sale.getCard().getBalance())
+                .build();
     }
 }

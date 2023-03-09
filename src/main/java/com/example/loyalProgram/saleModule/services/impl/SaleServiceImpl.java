@@ -41,16 +41,16 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @Transactional
-    public BigDecimal makeSale(Sale currSale) {
-        List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(currSale);
+    public Sale makeSale(Sale sale) {
+        List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(sale);
         loyalPrograms.forEach(loyalProgram -> {
             String simpleName = loyalProgram.getClass().getSimpleName();
             simpleName = simpleName.substring(0,1).toLowerCase() + simpleName.substring(1);
             simpleName = simpleName + "Service";
-            beansOfType.get(simpleName).applyProgram(currSale, loyalProgram);
+            beansOfType.get(simpleName).applyProgram(sale, loyalProgram);
         });
-        updateAmountAndCheckTier(currSale.getClient(), currSale.getSummaryPrice());
-        return currSale.getDiscountedPrice();
+        updateAmountAndCheckTier(sale.getClient(), sale.getSummaryPrice());
+        return sale;
     }
 
     private void updateAmountAndCheckTier(Client client, BigDecimal summaryPrice) {
