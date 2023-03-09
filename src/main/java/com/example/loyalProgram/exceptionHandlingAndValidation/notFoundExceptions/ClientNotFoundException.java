@@ -1,4 +1,4 @@
-package com.example.loyalProgram.exceptionHandler.notFoundExceptions;
+package com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions;
 
 public class ClientNotFoundException extends RuntimeException{
 

@@ -1,6 +1,10 @@
 package com.example.loyalProgram.exceptionHandlingAndValidation;
 
+import com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions.CardNotFoundException;
+import com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions.ClientNotFoundException;
+import com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions.MerchantNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,5 +28,36 @@ public class AppExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(CardNotFoundException exc){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exc.getMessage(),
+                System.currentTimeMillis())
+                ;
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(ClientNotFoundException exc){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exc.getMessage(),
+                System.currentTimeMillis())
+                ;
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(MerchantNotFoundException exc){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                exc.getMessage(),
+                System.currentTimeMillis())
+                ;
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

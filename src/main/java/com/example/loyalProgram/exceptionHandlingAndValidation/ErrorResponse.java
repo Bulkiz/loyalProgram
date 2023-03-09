@@ -1,4 +1,4 @@
-package com.example.loyalProgram.exceptionHandler;
+package com.example.loyalProgram.exceptionHandlingAndValidation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

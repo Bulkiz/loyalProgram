@@ -6,7 +6,7 @@ import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.enums.PointStatus;
 import com.example.loyalProgram.enums.TransactionStatus;
-import com.example.loyalProgram.exceptionHandler.notFoundExceptions.CardNotFoundException;
+import com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions.CardNotFoundException;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
