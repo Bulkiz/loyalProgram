@@ -45,7 +45,7 @@ public class SaleMapper {
                 .discountedPrice(sale.getDiscountedPrice())
                 .summaryPrice(sale.getSummaryPrice())
                 .usedPoints(sale.getUsedPoints())
-                .cardBalance(sale.getCard().getBalance())
+                .cardBalance(cardRepository.findById(sale.getCard().getId()).orElseThrow().getBalance())
                 .build();
     }
 }
