@@ -9,6 +9,7 @@ import com.example.loyalProgram.merchantModule.entities.Tier;
 import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import com.example.loyalProgram.saleModule.services.SaleService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -33,6 +34,8 @@ public class SaleServiceImpl implements SaleService {
     @Autowired
     private ApplicationContext applicationContext;
     Map<String, LoyalProgramService> beansOfType;
+    @Autowired
+    private SaleRepository saleRepository;
 
     @PostConstruct
     private void postInit() {
@@ -50,7 +53,7 @@ public class SaleServiceImpl implements SaleService {
             beansOfType.get(simpleName).applyProgram(sale, loyalProgram);
         });
         updateAmountAndCheckTier(sale.getClient(), sale.getSummaryPrice());
-        return sale;
+        return saleRepository.save(sale);
     }
 
     private void updateAmountAndCheckTier(Client client, BigDecimal summaryPrice) {

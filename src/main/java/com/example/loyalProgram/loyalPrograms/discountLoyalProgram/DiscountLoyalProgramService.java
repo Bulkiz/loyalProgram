@@ -1,6 +1,7 @@
 package com.example.loyalProgram.loyalPrograms.discountLoyalProgram;
 
 import com.example.loyalProgram.basePackage.Calculator;
+import com.example.loyalProgram.basePackage.GenerateCard;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.entities.SaleBonus;
@@ -15,11 +16,13 @@ import java.math.BigDecimal;
 public class DiscountLoyalProgramService implements LoyalProgramService<DiscountLoyalProgram> {
     @Autowired private SaleBonusRepository saleBonusRepository;
     @Autowired private SaleRepository saleRepository;
+
+    @Autowired private GenerateCard generateCard;
     private BigDecimal currDiscountPrice;
     @Override
     public Sale applyProgram(Sale currSale, DiscountLoyalProgram discountLoyalProgram) {
         Sale sale = discountSaleMethod(currSale, discountLoyalProgram.getDiscountPercentage());
-        saleBonusRepository.save(generateSaleBonus(sale, discountLoyalProgram));
+        generateCard.generateSaleBonus(sale, discountLoyalProgram);
         return sale;
     }
 
@@ -34,12 +37,5 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
         sale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
         return saleRepository.save(sale);
     }
-    private SaleBonus generateSaleBonus(Sale sale, DiscountLoyalProgram discountLoyalProgram) {
-        return SaleBonus.builder()
-                .loyalProgram(discountLoyalProgram)
-                .sale(sale)
-                .currentPrice(sale.getSummaryPrice())
-                .savedMoney(currDiscountPrice)
-                .build();
-    }
+
 }

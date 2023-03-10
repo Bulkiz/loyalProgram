@@ -1,5 +1,6 @@
 package com.example.loyalProgram.loyalPrograms.usePointsLoyalProgram;
 
+import com.example.loyalProgram.basePackage.GenerateCard;
 import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.entities.CardHistory;
 import com.example.loyalProgram.clientModule.repositories.CardHistoryRepository;
@@ -21,11 +22,13 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
     @Autowired
     CardRepository cardRepository;
     @Autowired CardHistoryRepository cardHistoryRepository;
+    @Autowired GenerateCard generateCard;
     @Override
-    public Sale applyProgram(Sale sale, UsePointsLoyalProgram loyalProgram) {
+    public Sale applyProgram(Sale sale, UsePointsLoyalProgram usePointsLoyalProgram) {
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow(CardNotFoundException::new);
         updateStatusAndBalanceByDate(card);
         usePoints(card, sale.getUsedPoints(), sale);
+        generateCard.generateSaleBonus(sale, usePointsLoyalProgram);
         return sale;
     }
     private void updateStatusAndBalanceByDate(Card card) {
