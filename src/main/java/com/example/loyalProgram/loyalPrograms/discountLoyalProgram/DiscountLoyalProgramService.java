@@ -35,7 +35,7 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
         }
         sale.setDiscountedPrice(discountedPrice);
         sale.setSummaryPrice(sale.getOriginalPrice().subtract(discountedPrice));
-        return saleRepository.save(sale);
+        return sale;
     }
 
 }

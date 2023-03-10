@@ -10,6 +10,7 @@ import com.example.loyalProgram.enums.TransactionStatus;
 import com.example.loyalProgram.exceptionHandlingAndValidation.notFoundExceptions.CardNotFoundException;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
+import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
     CardRepository cardRepository;
     @Autowired CardHistoryRepository cardHistoryRepository;
     @Autowired GenerateCard generateCard;
+    @Autowired
+    SaleRepository saleRepository;
     @Override
     public Sale applyProgram(Sale sale, UsePointsLoyalProgram usePointsLoyalProgram) {
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow(CardNotFoundException::new);

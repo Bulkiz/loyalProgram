@@ -46,6 +46,7 @@ public class SaleServiceImpl implements SaleService {
     @Transactional
     public Sale makeSale(Sale sale) {
         List<LoyalProgram> loyalPrograms = getLoyalProgramsSorted(sale);
+        saleRepository.save(sale);
         loyalPrograms.forEach(loyalProgram -> {
             String simpleName = loyalProgram.getClass().getSimpleName();
             simpleName = simpleName.substring(0,1).toLowerCase() + simpleName.substring(1);
@@ -53,18 +54,16 @@ public class SaleServiceImpl implements SaleService {
             beansOfType.get(simpleName).applyProgram(sale, loyalProgram);
         });
         updateAmountAndCheckTier(sale.getClient(), sale.getSummaryPrice());
-        return saleRepository.save(sale);
+        return sale;
     }
 
     private void updateAmountAndCheckTier(Client client, BigDecimal summaryPrice) {
         client.setAmountSpend(client.getAmountSpend().add(summaryPrice));
-        if (client.getTier().getTierAmount().compareTo(client.getAmountSpend()) <= 0) {
-            Tier tier = tierRepository.
-                    findFirstByMerchantAndTierAmountGreaterThanOrderByTierAmount(client.getMerchant(),
-                            client.getTier().getTierAmount());
-            if (Objects.nonNull(tier)){
-                client.setTier(tier);
-            }
+        Tier nextTier = tierRepository.
+                findFirstByMerchantAndTierAmountGreaterThanOrderByTierAmount(client.getMerchant(),
+                        client.getTier().getTierAmount());
+        if (Objects.nonNull(nextTier) && nextTier.getTierAmount().compareTo(client.getAmountSpend()) <= 0) {
+                client.setTier(nextTier);
         }
         clientRepository.save(client);
     }
