@@ -4,7 +4,6 @@ import com.example.loyalProgram.basePackage.Calculator;
 import com.example.loyalProgram.basePackage.GenerateCard;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
-import com.example.loyalProgram.saleModule.entities.SaleBonus;
 import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
     @Override
     public Sale applyProgram(Sale currSale, DiscountLoyalProgram discountLoyalProgram) {
         Sale sale = discountSaleMethod(currSale, discountLoyalProgram.getDiscountPercentage());
-        generateCard.generateSaleBonus(sale, discountLoyalProgram);
+        generateCard.generateSaleBonus(sale, discountLoyalProgram, sale.getDiscountedPrice());
         return sale;
     }
 

@@ -13,6 +13,8 @@ import com.example.loyalProgram.saleModule.entities.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class SaleMapper {
 
@@ -30,6 +32,8 @@ public class SaleMapper {
                 .client(client)
                 .card(card)
                 .originalPrice(inputSaleDTO.getPrice())
+                .summaryPrice(inputSaleDTO.getPrice())
+                .discountedPrice(BigDecimal.ZERO)
                 .usedPoints(inputSaleDTO.getUsedPoints())
                 .build();
     }
