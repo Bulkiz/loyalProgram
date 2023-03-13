@@ -10,12 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ClientServiceImpl implements ClientService {
-    @Autowired
-    GenerateCardAndSaleBonus generateCardAndSaleBonus;
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
-    private CardRepository cardRepository;
+    @Autowired private GenerateCardAndSaleBonus generateCardAndSaleBonus;
+    @Autowired private ClientRepository clientRepository;
+    @Autowired private CardRepository cardRepository;
 
     @Override
     public void addCard(Integer clientId) {

@@ -1,6 +1,5 @@
-package com.example.loyalProgram.merchantModule.repositories;
+package com.example.loyalProgram.loyalPrograms.baseLoyalProgram;
 
-import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

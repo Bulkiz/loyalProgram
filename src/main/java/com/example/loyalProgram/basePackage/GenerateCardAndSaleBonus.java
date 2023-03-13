@@ -18,11 +18,11 @@ public class GenerateCardAndSaleBonus {
     @Autowired private SaleBonusRepository saleBonusRepository;
 
     public void generateAndSetCard(Client client) {
-        Card card = new Card();
         List<Card> currCards = cardRepository.findByClient(client);
+        Card card = new Card();
         card.setIsActive(true);
-        currCards.add(card);
         card.setClient(client);
+        currCards.add(card);
         client.setCards(currCards);
         cardRepository.save(card);
     }

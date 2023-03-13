@@ -17,8 +17,7 @@ import java.time.LocalDateTime;
 
 @Service
 public class AddPointsLoyalProgramService implements LoyalProgramService<AddPointsLoyalProgram> {
-    @Autowired
-    private CardRepository cardRepository;
+    @Autowired private CardRepository cardRepository;
     @Autowired
     private CardHistoryRepository cardHistoryRepository;
 

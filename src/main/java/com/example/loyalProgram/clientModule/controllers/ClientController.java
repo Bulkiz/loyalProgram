@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/client")
 public class ClientController {
-    @Autowired
-    ClientService clientService;
+    @Autowired private ClientService clientService;
 
     @PostMapping("/{clientId}/addCard")
     public String addCardByClientId(@PathVariable Integer clientId){

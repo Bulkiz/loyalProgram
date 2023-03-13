@@ -21,9 +21,8 @@ import java.util.List;
 @RequestMapping("/merchant")
 public class MerchantController {
 
-    @Autowired
-    MerchantService addingService;
-    @Autowired ModelMapper modelMapper;
+    @Autowired private MerchantService addingService;
+    @Autowired private ModelMapper modelMapper;
 
     @PostMapping
     public MerchantDTO addMerchant(@Valid @RequestBody MerchantDTO merchantDTO){

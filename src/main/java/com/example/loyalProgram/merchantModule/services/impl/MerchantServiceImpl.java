@@ -5,7 +5,7 @@ import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.merchantModule.repositories.LoyalProgramRepository;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.MerchantRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.merchantModule.services.MerchantService;
