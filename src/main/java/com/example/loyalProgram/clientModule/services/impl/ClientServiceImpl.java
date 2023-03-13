@@ -4,14 +4,14 @@ import com.example.loyalProgram.clientModule.entities.Card;
 import com.example.loyalProgram.clientModule.repositories.CardRepository;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.clientModule.services.ClientService;
-import com.example.loyalProgram.basePackage.GenerateCard;
+import com.example.loyalProgram.basePackage.GenerateCardAndSaleBonus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ClientServiceImpl implements ClientService {
     @Autowired
-    GenerateCard generateCard;
+    GenerateCardAndSaleBonus generateCardAndSaleBonus;
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
@@ -19,7 +19,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void addCard(Integer clientId) {
-       generateCard.generateAndSetCard(clientRepository.findById(clientId).orElseThrow());
+       generateCardAndSaleBonus.generateAndSetCard(clientRepository.findById(clientId).orElseThrow());
     }
 
     @Override

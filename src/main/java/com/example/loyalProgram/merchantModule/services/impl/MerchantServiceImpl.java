@@ -1,6 +1,6 @@
 package com.example.loyalProgram.merchantModule.services.impl;
 
-import com.example.loyalProgram.basePackage.GenerateCard;
+import com.example.loyalProgram.basePackage.GenerateCardAndSaleBonus;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.merchantModule.entities.Merchant;
@@ -22,7 +22,7 @@ public class MerchantServiceImpl implements MerchantService {
     @Autowired private TierRepository tierRepository;
     @Autowired private LoyalProgramRepository loyalProgramRepository;
     @Autowired private ClientRepository clientRepository;
-    @Autowired private GenerateCard generateCard;
+    @Autowired private GenerateCardAndSaleBonus generateCardAndSaleBonus;
 
     @Override
     public Merchant addMerchant(Merchant merchant) {
@@ -54,7 +54,7 @@ public class MerchantServiceImpl implements MerchantService {
         return clients.parallelStream().peek(currentClient -> {
             currentClient.setMerchant(merchantRepository.findById(merchantId).orElseThrow());
             clientRepository.save(currentClient);
-            generateCard.generateAndSetCard(currentClient);
+            generateCardAndSaleBonus.generateAndSetCard(currentClient);
         }).toList();
     }
 

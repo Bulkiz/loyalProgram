@@ -1,7 +1,7 @@
 package com.example.loyalProgram.loyalPrograms.discountLoyalProgram;
 
 import com.example.loyalProgram.basePackage.Calculator;
-import com.example.loyalProgram.basePackage.GenerateCard;
+import com.example.loyalProgram.basePackage.GenerateCardAndSaleBonus;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.repositories.SaleBonusRepository;
@@ -16,7 +16,7 @@ public class DiscountLoyalProgramService implements LoyalProgramService<Discount
     @Autowired private SaleBonusRepository saleBonusRepository;
     @Autowired private SaleRepository saleRepository;
 
-    @Autowired private GenerateCard generateCard;
+    @Autowired private GenerateCardAndSaleBonus generateCard;
     private BigDecimal currDiscountPrice;
     @Override
     public Sale applyProgram(Sale currSale, DiscountLoyalProgram discountLoyalProgram) {
