@@ -31,7 +31,9 @@ public class UsePointsLoyalProgramService implements LoyalProgramService<UsePoin
         Card card = cardRepository.findById(sale.getCard().getId()).orElseThrow(CardNotFoundException::new);
         updateStatusAndBalanceByDate(card);
         usePoints(card, sale.getUsedPoints(), sale);
-        generateCard.generateSaleBonus(sale, usePointsLoyalProgram, sale.getUsedPoints());
+        if (sale.getUsedPoints().compareTo(BigDecimal.ZERO) > 0) {
+            generateCard.generateSaleBonus(sale, usePointsLoyalProgram, sale.getUsedPoints());
+        }
         return sale;
     }
     private void updateStatusAndBalanceByDate(Card card) {
