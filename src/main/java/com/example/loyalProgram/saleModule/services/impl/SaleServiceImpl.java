@@ -4,9 +4,9 @@ package com.example.loyalProgram.saleModule.services.impl;
 import com.example.loyalProgram.clientModule.entities.Client;
 import com.example.loyalProgram.clientModule.repositories.ClientRepository;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgram;
+import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramRepository;
 import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramService;
 import com.example.loyalProgram.merchantModule.entities.Tier;
-import com.example.loyalProgram.loyalPrograms.baseLoyalProgram.LoyalProgramRepository;
 import com.example.loyalProgram.merchantModule.repositories.TierRepository;
 import com.example.loyalProgram.saleModule.entities.Sale;
 import com.example.loyalProgram.saleModule.repositories.SaleRepository;
@@ -25,17 +25,12 @@ import java.util.Objects;
 @Service
 public class SaleServiceImpl implements SaleService {
 
-    @Autowired
-    private ClientRepository clientRepository;
-    @Autowired
-    private TierRepository tierRepository;
-    @Autowired
-    private LoyalProgramRepository loyalProgramRepository;
-    @Autowired
-    private ApplicationContext applicationContext;
+    @Autowired private ClientRepository clientRepository;
+    @Autowired private TierRepository tierRepository;
+    @Autowired private LoyalProgramRepository loyalProgramRepository;
+    @Autowired private ApplicationContext applicationContext;
     Map<String, LoyalProgramService> beansOfType;
-    @Autowired
-    private SaleRepository saleRepository;
+    @Autowired private SaleRepository saleRepository;
 
     @PostConstruct
     private void postInit() {
