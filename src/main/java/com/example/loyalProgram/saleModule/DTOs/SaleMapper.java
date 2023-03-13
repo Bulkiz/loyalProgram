@@ -33,7 +33,6 @@ public class SaleMapper {
                 .card(card)
                 .originalPrice(inputSaleDTO.getPrice())
                 .summaryPrice(inputSaleDTO.getPrice())
-                .discountedPrice(BigDecimal.ZERO)
                 .usedPoints(inputSaleDTO.getUsedPoints())
                 .build();
     }

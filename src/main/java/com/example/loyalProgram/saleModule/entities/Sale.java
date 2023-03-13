@@ -32,7 +32,7 @@ public class Sale extends BaseEntity {
     @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal originalPrice;
     @Column(columnDefinition = "numeric(19, 2)")
-    private BigDecimal discountedPrice;
+    private BigDecimal discountedPrice = BigDecimal.ZERO;
     @Column(columnDefinition = "numeric(19, 2)")
     private BigDecimal summaryPrice;
     @OneToMany(mappedBy = "sale")
